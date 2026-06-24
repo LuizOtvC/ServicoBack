@@ -8,23 +8,23 @@ package com.main.servicoFinal.model;
  *
  * @author Mateus
  */
-public class UserLogar {
+public class UserPerfil {
     
     private String nome;
-    private String senha;
     private String email;
     private String telefone;
-    private String reputação;
+    private Double reputacao;
+    private Integer horasSemana;
 
-    public UserLogar() {
+    public UserPerfil() {
     }
 
-    public UserLogar(String nome, String senha, String email, String telefone, String reputação) {
+    public UserPerfil(String nome, String email, String telefone, Double reputacao, Integer horasSemana) {
         this.nome = nome;
-        this.senha = senha;
         this.email = email;
         this.telefone = telefone;
-        this.reputação = reputação;
+        this.reputacao = reputacao;
+        this.horasSemana = horasSemana;
     }
 
     public String getNome() {
@@ -33,14 +33,6 @@ public class UserLogar {
 
     public void setNome(String nome) {
         this.nome = nome;
-    }
-
-    public String getSenha() {
-        return senha;
-    }
-
-    public void setSenha(String senha) {
-        this.senha = senha;
     }
 
     public String getEmail() {
@@ -59,16 +51,21 @@ public class UserLogar {
         this.telefone = telefone;
     }
 
-    public String getReputação() {
-        return reputação;
+    public Double getReputacao() {
+        return reputacao;
     }
 
-    public void setReputação(String reputação) {
-        this.reputação = reputação;
+    public void setReputacao(Double reputacao) {
+        this.reputacao = reputacao;
     }
 
-    
-    
-    
-    
+    public Integer getHorasSemana() {
+        return horasSemana;
+    }
+
+    public void setHorasSemana(Integer horasSemana) {
+        this.horasSemana = horasSemana;
+    }
+
+   
 }

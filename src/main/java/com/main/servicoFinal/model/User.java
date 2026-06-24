@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(nullable = false, length = 100)
@@ -40,18 +40,6 @@ public class User {
     public User() {
     }
 
-    public User(Long id, String nome, String email, String telefone, String senha, Integer horasSemana, Double pesoServicos, Double pesoOrcamento, Double pesoHistorico) {
-        this.id = id;
-        this.nome = nome;
-        this.email = email;
-        this.telefone = telefone;
-        this.senha = senha;
-        this.horasSemana = horasSemana;
-        this.pesoServicos = pesoServicos;
-        this.pesoOrcamento = pesoOrcamento;
-        this.pesoHistorico = pesoHistorico;
-    }
-    
     
 
     public Long getId() {
@@ -134,6 +122,10 @@ public class User {
     public void setTelefone(String telefone) {
         this.telefone = telefone;
     }
+
+    
+
+    
     
     
 }

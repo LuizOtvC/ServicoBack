@@ -5,6 +5,8 @@
 package com.main.servicoFinal.service;
 
 import com.main.servicoFinal.model.User;
+import com.main.servicoFinal.model.UserFree;
+import com.main.servicoFinal.model.UserPerfil;
 import com.main.servicoFinal.model.UserRegistro;
 import com.main.servicoFinal.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,13 +33,13 @@ public class UserService {
             .orElseThrow(() ->
                 new ResponseStatusException(
                 HttpStatus.UNAUTHORIZED,
-                "Email ou senha inválidos"
+                "Email invalido"
             ));
 
     if (!senha.equals(user.getSenha())) {
         throw new ResponseStatusException(
             HttpStatus.UNAUTHORIZED,
-            "Email ou senha inválidos"
+            "senha inválido"
         );
     }
 
@@ -47,12 +49,16 @@ public class UserService {
     public String registrar(UserRegistro dados) {
     if (repository.existsByEmail(dados.getEmail())) {
         throw new ResponseStatusException(HttpStatus.CONFLICT,"Email já cadastrado");
+    }else if(dados.getEmail().equals("")){
+        throw new ResponseStatusException(HttpStatusCode.valueOf(400),"prencha o email corretamente");
     }else if(dados.getNome().equals("")){
         throw new ResponseStatusException(HttpStatusCode.valueOf(400),"prencha o nome corretamente");
     }else if(dados.getSenha().equals("")){
         throw new ResponseStatusException(HttpStatusCode.valueOf(400),"prencha a senha corretamente");
-    }else if(dados.getTelefone().equals("")){
+    }else if(repository.existsByTelefone(dados.getTelefone())){
         throw new ResponseStatusException(HttpStatus.CONFLICT,"Telefone já cadastrado");
+    }else if(dados.getTelefone().equals("")){
+        throw new ResponseStatusException(HttpStatusCode.valueOf(400),"prencha o telefone corretamente");
     }
 
     User user = new User();
@@ -63,6 +69,25 @@ public class UserService {
 
     repository.save(user);
     return tokenrepository.gerarToken(user);
+}
+    
+    public void atualizarPerfil(Long id, UserFree dados) {
+    User user = repository.getReferenceById(id);
+    user.setNome(dados.getNome());
+    user.setTelefone(dados.getTelefone());
+    user.setHorasSemana(dados.getHorasSemana());
+    repository.save(user);
+}
+    public UserPerfil verPerfil(Long id) {
+    User user = repository.getReferenceById(id);
+    
+    return new UserPerfil(
+        user.getNome(),
+        user.getEmail(),
+        user.getTelefone(),
+        user.getReputacao(),
+        user.getHorasSemana()
+    );
 }
     
 }
