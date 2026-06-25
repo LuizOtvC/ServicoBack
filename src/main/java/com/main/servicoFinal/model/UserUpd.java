@@ -8,13 +8,13 @@ package com.main.servicoFinal.model;
  *
  * @author Mateus
  */
-public class UserFree {
+public class UserUpd {
     
     private String nome;
     private String telefone;
     private Integer horasSemana;
 
-    public UserFree(String nome, String telefone, Integer horasSemana) {
+    public UserUpd(String nome, String telefone, Integer horasSemana) {
         this.nome = nome;
         this.telefone = telefone;
         this.horasSemana = horasSemana;
@@ -22,7 +22,7 @@ public class UserFree {
 
     
 
-    public UserFree() {
+    public UserUpd() {
     }
 
     public String getNome() {

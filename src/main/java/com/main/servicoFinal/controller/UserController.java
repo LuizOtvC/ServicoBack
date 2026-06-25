@@ -5,7 +5,7 @@
 package com.main.servicoFinal.controller;
 
 import com.main.servicoFinal.model.User;
-import com.main.servicoFinal.model.UserFree;
+import com.main.servicoFinal.model.UserUpd;
 import com.main.servicoFinal.model.UserLogar;
 import com.main.servicoFinal.model.UserPerfil;
 import com.main.servicoFinal.model.UserRegistro;
@@ -36,7 +36,7 @@ public class UserController {
     private TokenService tokens;
     
    @PostMapping("/logar")
-    public String Logar(@RequestBody UserLogar user){
+    public String Logar(@RequestBody User user){
         return service.logar(user.getEmail(), user.getSenha());
     }
     
@@ -46,7 +46,7 @@ public class UserController {
     }
     
     @PutMapping("/atualizar")
-    public String atualizar(@RequestBody UserFree user, @RequestHeader("Authorization") String auth){
+    public String atualizar(@RequestBody UserUpd user, @RequestHeader("Authorization") String auth){
         String token = auth.replace("Bearer ", "");
         User usertoken = tokens.extrairClaims(token);
         service.atualizarPerfil(usertoken.getId(), user);

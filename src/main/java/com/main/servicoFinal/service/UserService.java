@@ -5,7 +5,7 @@
 package com.main.servicoFinal.service;
 
 import com.main.servicoFinal.model.User;
-import com.main.servicoFinal.model.UserFree;
+import com.main.servicoFinal.model.UserUpd;
 import com.main.servicoFinal.model.UserPerfil;
 import com.main.servicoFinal.model.UserRegistro;
 import com.main.servicoFinal.repository.UserRepository;
@@ -71,7 +71,7 @@ public class UserService {
     return tokenrepository.gerarToken(user);
 }
     
-    public void atualizarPerfil(Long id, UserFree dados) {
+    public void atualizarPerfil(Long id, UserUpd dados) {
     User user = repository.getReferenceById(id);
     user.setNome(dados.getNome());
     user.setTelefone(dados.getTelefone());
