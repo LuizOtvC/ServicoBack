@@ -6,14 +6,12 @@ package com.main.servicoFinal.controller;
 
 import com.main.servicoFinal.model.User;
 import com.main.servicoFinal.model.UserUpd;
-import com.main.servicoFinal.model.UserLogar;
 import com.main.servicoFinal.model.UserPerfil;
 import com.main.servicoFinal.model.UserRegistro;
 import com.main.servicoFinal.service.TokenService;
 import com.main.servicoFinal.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;

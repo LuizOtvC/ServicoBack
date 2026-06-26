@@ -8,4 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface UsuarioServicoRepository extends JpaRepository<UsuarioServicoDto, Long>{
    
 List<UsuarioServicoDto> findByUsuarioId(Long usuarioId);
+
 }
