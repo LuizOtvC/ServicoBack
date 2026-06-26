@@ -1,6 +1,8 @@
 package com.main.servicoFinal.model;
 
 import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "usuario")
@@ -36,6 +38,9 @@ public class User {
 
     @Column(name = "peso_historico")
     private Double pesoHistorico;
+    
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UsuarioServicoDto> servicos = new ArrayList<>();
 
     public User() {
     }
@@ -121,6 +126,14 @@ public class User {
 
     public void setTelefone(String telefone) {
         this.telefone = telefone;
+    }
+
+    public List<UsuarioServicoDto> getServicos() {
+        return servicos;
+    }
+
+    public void setServicos(List<UsuarioServicoDto> servicos) {
+        this.servicos = servicos;
     }
 
     

@@ -6,6 +6,7 @@ package com.main.servicoFinal.repository;
 
 import com.main.servicoFinal.model.ServicoDto;
 import com.main.servicoFinal.model.User;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Repository;
  * @author Aluno
  */
 @Repository
-public interface ServiceRepository extends JpaRepository<ServicoDto, User> {
+public interface ServiceRepository extends JpaRepository<ServicoDto, Long> {
    
     
 }
