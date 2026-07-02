@@ -4,12 +4,19 @@
  */
 package com.main.servicoFinal.controller;
 
+import ch.qos.logback.core.model.Model;
+import com.main.servicoFinal.model.ServicoDto;
+import com.main.servicoFinal.model.ServicoListar;
 import com.main.servicoFinal.model.User;
+import com.main.servicoFinal.model.UserPerfil;
 import com.main.servicoFinal.model.UsuarioServicoDto;
 import com.main.servicoFinal.service.ServicoService;
 import com.main.servicoFinal.service.TokenService;
 import com.main.servicoFinal.service.UserService;
+import jakarta.servlet.http.HttpSession;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -39,4 +46,20 @@ public class ServiceController {
     service.adicionarHabilidade(usertoken.getId(), servicoId, nivel);
 }
     
+    @GetMapping("/listar")
+    public List<ServicoDto> listar(@RequestHeader("Authorization") String auth){
+        
+        
+        String token = auth.replace("Bearer ", "");
+        User usertoken = tokens.extrairClaims(token);
+        return service.listarTodosServicos();
+
+    }
+    
+    @GetMapping("/listarHabilidadesId")
+    public List<ServicoListar> listarHabilidadesId(@RequestHeader("Authorization") String auth){
+        String token = auth.replace("Bearer ", "");
+        User usertoken = tokens.extrairClaims(token);
+        return service.listarHabilidades(usertoken.getId());
+    }
 }
