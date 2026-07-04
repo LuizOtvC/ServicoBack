@@ -9,16 +9,28 @@ package com.main.servicoFinal.model;
  * @author Mateus
  */
 public class ServicoListar {
+    private Long ServicoId;
     private String nomeServico;
     private String nivel;
 
     public ServicoListar() {
     }
 
-    public ServicoListar(String nomeServico, String nivel) {
+    public ServicoListar(Long ServicoId, String nomeServico, String nivel) {
+        this.ServicoId = ServicoId;
         this.nomeServico = nomeServico;
         this.nivel = nivel;
     }
+
+    public Long getServicoId() {
+        return ServicoId;
+    }
+
+    public void setServicoId(Long ServicoId) {
+        this.ServicoId = ServicoId;
+    }
+
+    
 
     public String getNomeServico() {
         return nomeServico;
@@ -35,7 +47,6 @@ public class ServicoListar {
     public void setNivel(String nivel) {
         this.nivel = nivel;
     }
-    
-    
+
     
 }

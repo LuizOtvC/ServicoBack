@@ -54,7 +54,7 @@ public class ServicoService {
     List<ServicoListar> resultado = new ArrayList<>();
 
     for (UsuarioServicoDto us : lista) {
-        resultado.add(new ServicoListar(us.getServico().getNome(),us.getNivel().name()));
+        resultado.add(new ServicoListar(us.getServico().getId(), us.getServico().getNome(),us.getNivel().name()));
     }
 
     return resultado;
