@@ -53,9 +53,6 @@ public class ServiceController {
     @GetMapping("/listar")
     public List<ServicoDto> listar(@RequestHeader("Authorization") String auth){
         
-        
-        String token = auth.replace("Bearer ", "");
-        User usertoken = tokens.extrairClaims(token);
         return service.listarTodosServicos();
 
     }
