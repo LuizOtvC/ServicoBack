@@ -8,16 +8,19 @@ import com.main.servicoFinal.model.ProjetoDto;
 import com.main.servicoFinal.model.ProjetoResposta;
 import com.main.servicoFinal.model.ProjetoUserDto;
 import com.main.servicoFinal.model.User;
+import com.main.servicoFinal.model.UsuarioServicoDto;
 import com.main.servicoFinal.service.ProjetoService;
 import com.main.servicoFinal.service.ServicoService;
 import com.main.servicoFinal.service.TokenService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -51,5 +54,11 @@ public List<ProjetoResposta> listarProjetoFiltro(@RequestHeader("Authorization")
     String token = auth.replace("Bearer ", "");
     tokens.extrairClaims(token);
     return service.listarProjetosFiltro();
+}
+@GetMapping("/listarId/{id}")
+public ProjetoResposta listarProjetoId(@RequestHeader("Authorization") String auth, @PathVariable Long id) {
+    String token = auth.replace("Bearer ", "");
+    tokens.extrairClaims(token);
+    return service.projetoPorId(id);
 }
 }

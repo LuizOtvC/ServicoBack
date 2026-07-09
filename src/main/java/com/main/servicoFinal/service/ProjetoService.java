@@ -19,6 +19,7 @@ import com.main.servicoFinal.repository.UserRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -88,6 +89,27 @@ public class ProjetoService {
         ));
     }
     return resultado;
+}
+    
+    public ProjetoResposta projetoPorId(Long id) {
+    ProjetoDto p = projetoRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Projeto não encontrado"));
+
+    List<String> servicos = new ArrayList<>();
+    List<ProjetoServicoDto> ps = projetoServicoRepository.findByProjetoId(p.getId());
+    for (ProjetoServicoDto s : ps) {
+        servicos.add(s.getServico().getNome());
+    }
+
+    return new ProjetoResposta(
+        p.getId(),
+        p.getTitulo(),
+        p.getDescricao(),
+        p.getOrcamento(),
+        p.getHorasEstimadas(),
+        p.getStatus().name(),
+        servicos
+    );
 }
     
 }
