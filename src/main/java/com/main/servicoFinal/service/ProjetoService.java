@@ -80,18 +80,21 @@ public class ProjetoService {
         }
         resultado.add(new ProjetoResposta(
             p.getId(),
-            p.getTitulo(),
-            p.getDescricao(),
-            p.getOrcamento(),
-            p.getHorasEstimadas(),
-            p.getStatus().name(),
-            servicos
+        p.getTitulo(),
+        p.getDescricao(),
+        p.getOrcamento(),
+        p.getHorasEstimadas(),
+        p.getStatus().name(),
+        servicos,
+        p.getUsuarioId().getId(),
+        p.getScoreRisco(),
+        p.getCriadoEm()
         ));
     }
     return resultado;
 }
     
-    public ProjetoResposta projetoPorId(Long id) {
+   public ProjetoResposta projetoPorId(Long id) {
     ProjetoDto p = projetoRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("Projeto não encontrado"));
 
@@ -108,10 +111,12 @@ public class ProjetoService {
         p.getOrcamento(),
         p.getHorasEstimadas(),
         p.getStatus().name(),
-        servicos
+        servicos,
+        p.getUsuarioId().getId(),
+        p.getScoreRisco(),
+        p.getCriadoEm()
     );
 }
-    
 }
      
 

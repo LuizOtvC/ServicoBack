@@ -1,17 +1,10 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.main.servicoFinal.model;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- *
- * @author Mateus
- */
 public class ProjetoResposta {
-    
+
     private Long id;
     private String titulo;
     private String descricao;
@@ -19,9 +12,13 @@ public class ProjetoResposta {
     private Integer horasEstimadas;
     private String status;
     private List<String> servicos;
+    private Long usuarioId;
+    private Integer scoreRisco;
+    private LocalDateTime criadoEm;
 
     public ProjetoResposta(Long id, String titulo, String descricao, Double orcamento,
-                           Integer horasEstimadas, String status, List<String> servicos) {
+                            Integer horasEstimadas, String status, List<String> servicos,
+                            Long usuarioId, Integer scoreRisco, LocalDateTime criadoEm) {
         this.id = id;
         this.titulo = titulo;
         this.descricao = descricao;
@@ -29,6 +26,9 @@ public class ProjetoResposta {
         this.horasEstimadas = horasEstimadas;
         this.status = status;
         this.servicos = servicos;
+        this.usuarioId = usuarioId;
+        this.scoreRisco = scoreRisco;
+        this.criadoEm = criadoEm;
     }
 
     public Long getId() { return id; }
@@ -38,5 +38,7 @@ public class ProjetoResposta {
     public Integer getHorasEstimadas() { return horasEstimadas; }
     public String getStatus() { return status; }
     public List<String> getServicos() { return servicos; }
-    
+    public Long getUsuarioId() { return usuarioId; }
+    public Integer getScoreRisco() { return scoreRisco; }
+    public LocalDateTime getCriadoEm() { return criadoEm; }
 }

@@ -10,6 +10,7 @@ package com.main.servicoFinal.model;
  */
 public class UserLogar {
     
+   
     private String nome;
     private String senha;
     private String email;
@@ -26,6 +27,8 @@ public class UserLogar {
         this.telefone = telefone;
         this.reputação = reputação;
     }
+
+    
 
     public String getNome() {
         return nome;
