@@ -11,10 +11,29 @@ package com.main.servicoFinal.model;
 public class PropostaEnvioDto {
     private Long projetoId;
     private Double valorProposto;
+    private String descricao;
 
-    public Long getProjetoId() { return projetoId; }
-    public void setProjetoId(Long projetoId) { this.projetoId = projetoId; }
+    public Long getProjetoId() { 
+        return projetoId; 
+    }
+    public void setProjetoId(Long projetoId) {
+        this.projetoId = projetoId; 
+    }
 
-    public Double getValorProposto() { return valorProposto; }
-    public void setValorProposto(Double valorProposto) { this.valorProposto = valorProposto; }
+    public Double getValorProposto() {
+        return valorProposto; 
+    }
+    public void setValorProposto(Double valorProposto) {
+        this.valorProposto = valorProposto; 
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
+    
+    
 }

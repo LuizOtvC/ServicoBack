@@ -39,6 +39,9 @@ public class PropostaDto {
 
     @Column(nullable = false, name = "valor_proposto")
     private Double valorProposto;
+    
+    @Column(nullable = false)
+    private String descricao;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -97,6 +100,14 @@ public class PropostaDto {
 
     public void setEnviadoEm(LocalDateTime enviadoEm) {
         this.enviadoEm = enviadoEm;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
     }
 
     

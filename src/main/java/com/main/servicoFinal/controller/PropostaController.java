@@ -34,7 +34,7 @@ public class PropostaController {
     public void CriarProposta( @RequestBody PropostaEnvioDto dados, @RequestHeader("Authorization") String auth){
         String token = auth.replace("Bearer ", "");
     User usertoken = tokens.extrairClaims(token);
-    service.criarProposta(usertoken.getId(), dados.getProjetoId(), dados.getValorProposto());
+    service.criarProposta(usertoken.getId(), dados.getProjetoId(), dados.getValorProposto(), dados.getDescricao());
     }
     
 }

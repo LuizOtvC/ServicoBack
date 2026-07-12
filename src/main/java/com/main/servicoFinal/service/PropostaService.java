@@ -28,11 +28,12 @@ public class PropostaService {
     @Autowired
     private ProjetoRepository projetoRepository;
 
-    public void criarProposta(Long usuarioId, Long projetoId, Double valorProposto) {
+    public void criarProposta(Long usuarioId, Long projetoId, Double valorProposto, String descricao) {
         PropostaDto proposta = new PropostaDto();
         proposta.setUsuario(userRepository.getReferenceById(usuarioId));
         proposta.setProjeto(projetoRepository.getReferenceById(projetoId));
         proposta.setValorProposto(valorProposto);
+        proposta.setDescricao(descricao);
         proposta.setStatus(PropostaDto.Status.PENDENTE);
         proposta.setEnviadoEm(LocalDateTime.now());
         propostaRepository.save(proposta);

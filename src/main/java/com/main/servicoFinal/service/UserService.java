@@ -47,18 +47,23 @@ public class UserService {
 }
     
     public String registrar(UserRegistro dados) {
+    if (dados.getNome() == null || dados.getNome().equals("")) {
+        throw new ResponseStatusException(HttpStatusCode.valueOf(400), "preencha o nome corretamente");
+    }
+    if (dados.getEmail() == null || dados.getEmail().equals("")) {
+        throw new ResponseStatusException(HttpStatusCode.valueOf(400), "preencha o email corretamente");
+    }
+    if (dados.getSenha() == null || dados.getSenha().equals("")) {
+        throw new ResponseStatusException(HttpStatusCode.valueOf(400), "preencha a senha corretamente");
+    }
+    if (dados.getTelefone() == null || dados.getTelefone().equals("")) {
+        throw new ResponseStatusException(HttpStatusCode.valueOf(400), "preencha o telefone corretamente");
+    }
     if (repository.existsByEmail(dados.getEmail())) {
-        throw new ResponseStatusException(HttpStatus.CONFLICT,"Email já cadastrado");
-    }else if(dados.getEmail().equals("")){
-        throw new ResponseStatusException(HttpStatusCode.valueOf(400),"prencha o email corretamente");
-    }else if(dados.getNome().equals("")){
-        throw new ResponseStatusException(HttpStatusCode.valueOf(400),"prencha o nome corretamente");
-    }else if(dados.getSenha().equals("")){
-        throw new ResponseStatusException(HttpStatusCode.valueOf(400),"prencha a senha corretamente");
-    }else if(repository.existsByTelefone(dados.getTelefone())){
-        throw new ResponseStatusException(HttpStatus.CONFLICT,"Telefone já cadastrado");
-    }else if(dados.getTelefone().equals("")){
-        throw new ResponseStatusException(HttpStatusCode.valueOf(400),"prencha o telefone corretamente");
+        throw new ResponseStatusException(HttpStatus.CONFLICT, "Email já cadastrado");
+    }
+    if (repository.existsByTelefone(dados.getTelefone())) {
+        throw new ResponseStatusException(HttpStatus.CONFLICT, "Telefone já cadastrado");
     }
 
     User user = new User();
@@ -66,7 +71,6 @@ public class UserService {
     user.setEmail(dados.getEmail());
     user.setSenha(dados.getSenha());
     user.setTelefone(dados.getTelefone());
-
     repository.save(user);
     return tokenrepository.gerarToken(user);
 }
@@ -86,7 +90,8 @@ public class UserService {
         user.getEmail(),
         user.getTelefone(),
         user.getReputacao(),
-        user.getHorasSemana()
+        user.getHorasSemana(),
+            user.getId()
     );
 }
     
