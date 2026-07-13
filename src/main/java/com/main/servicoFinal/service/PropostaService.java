@@ -5,10 +5,13 @@
 package com.main.servicoFinal.service;
 
 import com.main.servicoFinal.model.PropostaDto;
+import com.main.servicoFinal.model.PropostaRespostaDto;
 import com.main.servicoFinal.repository.ProjetoRepository;
 import com.main.servicoFinal.repository.PropostaRepository;
 import com.main.servicoFinal.repository.UserRepository;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,5 +41,24 @@ public class PropostaService {
         proposta.setEnviadoEm(LocalDateTime.now());
         propostaRepository.save(proposta);
     }
+    
+    public List<PropostaRespostaDto> listarPropostasPendentes(Long usuarioId) {
+    List<PropostaDto> propostas = propostaRepository.findByProjetoUsuarioIdIdAndStatus(usuarioId, PropostaDto.Status.PENDENTE);
+    List<PropostaRespostaDto> resultado = new ArrayList<>();
+    for (PropostaDto p : propostas) {
+        resultado.add(new PropostaRespostaDto(
+            p.getId(),
+            p.getProjeto().getId(),
+            p.getProjeto().getTitulo(),
+            p.getUsuario().getId(),
+            p.getUsuario().getNome(),
+            p.getValorProposto(),
+            p.getDescricao(),
+            p.getStatus().name(),
+            p.getEnviadoEm()
+        ));
+    }
+    return resultado;
+}
     
 }

@@ -61,6 +61,7 @@ public class UserController {
     @GetMapping("/perfilId/{id}")
     public UserPerfil ListarPerfilId(@RequestHeader("Authorization") String auth,  @PathVariable Long id){
         String token = auth.replace("Bearer ", "");
+        tokens.extrairClaims(token);
         return service.verPerfil(id);
     }
 }

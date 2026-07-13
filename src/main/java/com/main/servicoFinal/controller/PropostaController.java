@@ -5,10 +5,13 @@
 package com.main.servicoFinal.controller;
 
 import com.main.servicoFinal.model.PropostaEnvioDto;
+import com.main.servicoFinal.model.PropostaRespostaDto;
 import com.main.servicoFinal.model.User;
 import com.main.servicoFinal.service.PropostaService;
 import com.main.servicoFinal.service.TokenService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -36,5 +39,17 @@ public class PropostaController {
     User usertoken = tokens.extrairClaims(token);
     service.criarProposta(usertoken.getId(), dados.getProjetoId(), dados.getValorProposto(), dados.getDescricao());
     }
+    
+    @GetMapping("/listarPendente")
+public List<PropostaRespostaDto> listarProjetoFiltro(@RequestHeader("Authorization") String auth) {
+    String token = auth.replace("Bearer ", "");
+    
+    tokens.extrairClaims(token);
+    User usertoken = tokens.extrairClaims(token);
+   
+    return service.listarPropostasPendentes(usertoken.getId());
+}
+
+
     
 }
