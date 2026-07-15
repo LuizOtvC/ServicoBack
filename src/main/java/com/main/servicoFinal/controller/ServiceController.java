@@ -77,5 +77,11 @@ public class ServiceController {
         User usertoken = tokens.extrairClaims(token);
          service.deletarHabilidade(usertoken.getId(), dados.getIdAntigo());
     }
+    @GetMapping("/listarHabilidadesId/{id}")
+    public List<ServicoListar> listarHabilidadesPorUsuario(@PathVariable Long id,@RequestHeader("Authorization") String auth) {
+    String token = auth.replace("Bearer ", "");
+    tokens.extrairClaims(token);
+    return service.listarHabilidades(id);
+}
     
 }

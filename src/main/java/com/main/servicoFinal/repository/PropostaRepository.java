@@ -6,6 +6,7 @@ package com.main.servicoFinal.repository;
 
 import com.main.servicoFinal.model.PropostaDto;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -17,5 +18,6 @@ import org.springframework.stereotype.Repository;
 public interface PropostaRepository extends JpaRepository<PropostaDto, Long>{
 List<PropostaDto> findByProjetoUsuarioIdIdAndStatus(Long usuarioId, PropostaDto.Status status);
 List<PropostaDto> findByUsuarioId(Long usuarioId);
+Optional<PropostaDto> findByProjeto_IdAndStatus(Long id, PropostaDto.Status status);
     
 }

@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -66,5 +67,18 @@ public List<ProjetoResposta> listarProjetosFiltroUsuario(@RequestHeader("Authori
     String token = auth.replace("Bearer ", "");
     User usertoken = tokens.extrairClaims(token);
     return service.listarProjetosUsuario(usertoken.getId());
+}
+@PutMapping("/andamento/{id}")
+public void emAndamentoProjeto(@PathVariable Long id, @RequestHeader("Authorization") String auth) {
+    String token = auth.replace("Bearer ", "");
+    tokens.extrairClaims(token);
+    service.projetoEmAndamento(id, token);
+}
+
+@PutMapping("/concluido/{id}")
+public void ConcluidoProjeto(@PathVariable Long id, @RequestHeader("Authorization") String auth) {
+    String token = auth.replace("Bearer ", "");
+    tokens.extrairClaims(token);
+    service.projetoConcluido(id, token);
 }
 }

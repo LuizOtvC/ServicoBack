@@ -9,11 +9,14 @@ import com.main.servicoFinal.model.ProjetoResposta;
 import com.main.servicoFinal.model.ProjetoServicoDto;
 import com.main.servicoFinal.model.ProjetoServicoIdDto;
 import com.main.servicoFinal.model.ProjetoUserDto;
+import com.main.servicoFinal.model.PropostaDto;
+import com.main.servicoFinal.model.PropostaRespostaDto;
 import com.main.servicoFinal.model.ServicoDto;
 import com.main.servicoFinal.model.User;
 import com.main.servicoFinal.model.UsuarioServicoDto;
 import com.main.servicoFinal.repository.ProjetoRepository;
 import com.main.servicoFinal.repository.ProjetoServicoRepository;
+import com.main.servicoFinal.repository.PropostaRepository;
 import com.main.servicoFinal.repository.ServiceRepository;
 import com.main.servicoFinal.repository.UserRepository;
 import java.time.LocalDateTime;
@@ -42,6 +45,9 @@ public class ProjetoService {
     
     @Autowired
     private ServiceRepository serviceRepository;
+    
+    @Autowired
+    private PropostaRepository propostaRepository;
     
     public void criarProjeto(Long usuarioId, ProjetoUserDto dados) {
     ProjetoDto projeto = new ProjetoDto();
@@ -89,12 +95,13 @@ public class ProjetoService {
         p.getUsuarioId().getId(),
         p.getScoreRisco(),
         p.getCriadoEm()
+        
         ));
     }
     return resultado;
 }
     
-   public ProjetoResposta projetoPorId(Long id) {
+  public ProjetoResposta projetoPorId(Long id) {
     ProjetoDto p = projetoRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("Projeto não encontrado"));
 
@@ -104,7 +111,7 @@ public class ProjetoService {
         servicos.add(s.getServico().getNome());
     }
 
-    return new ProjetoResposta(
+    ProjetoResposta resposta = new ProjetoResposta(
         p.getId(),
         p.getTitulo(),
         p.getDescricao(),
@@ -116,9 +123,28 @@ public class ProjetoService {
         p.getScoreRisco(),
         p.getCriadoEm()
     );
+
+    Optional<PropostaDto> propostaAceitaOpt = propostaRepository.findByProjeto_IdAndStatus(id, PropostaDto.Status.ACEITA);
+
+    if (propostaAceitaOpt.isPresent()) {
+        PropostaDto prop = propostaAceitaOpt.get();
+        PropostaRespostaDto dto = new PropostaRespostaDto();
+        dto.setId(prop.getId());
+        dto.setProjetoId(prop.getProjeto().getId());
+        dto.setNomeProjeto(prop.getProjeto().getTitulo());
+        dto.setUsuarioId(prop.getUsuario().getId());
+        dto.setNomeUsuario(prop.getUsuario().getNome());
+        dto.setValorProposto(prop.getValorProposto());
+        dto.setDescricao(prop.getDescricao());
+        dto.setStatus(prop.getStatus().name());
+        dto.setEnviadoEm(prop.getEnviadoEm());
+        resposta.setPropostaAceita(dto);
+    }
+
+    return resposta;
 }
    public List<ProjetoResposta> listarProjetosUsuario(Long id) {
-    List<ProjetoDto> projetos = projetoRepository.findByStatusAndUsuarioIdId(ProjetoDto.Status.ABERTO, id);
+    List<ProjetoDto> projetos = projetoRepository.findByUsuarioIdId(id);
     List<ProjetoResposta> resultado = new ArrayList<>();
 
     for (ProjetoDto p : projetos) {
@@ -141,6 +167,19 @@ public class ProjetoService {
         ));
     }
     return resultado;
+}
+   
+   public void projetoEmAndamento(Long id, String token) {
+    ProjetoDto proposta = projetoRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Projeto não encontrado"));
+    proposta.setStatus(ProjetoDto.Status.EM_ANDAMENTO);
+    projetoRepository.save(proposta);
+}
+   public void projetoConcluido(Long id, String token) {
+    ProjetoDto proposta = projetoRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Projeto não encontrado"));
+    proposta.setStatus(ProjetoDto.Status.CONCLUIDO);
+    projetoRepository.save(proposta);
 }
 }
      
