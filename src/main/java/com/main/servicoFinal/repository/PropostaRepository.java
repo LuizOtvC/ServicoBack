@@ -16,5 +16,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PropostaRepository extends JpaRepository<PropostaDto, Long>{
 List<PropostaDto> findByProjetoUsuarioIdIdAndStatus(Long usuarioId, PropostaDto.Status status);
+List<PropostaDto> findByUsuarioId(Long usuarioId);
     
 }

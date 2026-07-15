@@ -46,19 +46,25 @@ public class ProjetoController {
 @GetMapping("/listar")
 public List<ProjetoDto> listarProjeto(@RequestHeader("Authorization") String auth) {
     String token = auth.replace("Bearer ", "");
-    User usertoken = tokens.extrairClaims(token);
+    tokens.extrairClaims(token);
     return service.listarProjetos();
 }
 @GetMapping("/listarFiltro")
-public List<ProjetoResposta> listarProjetoFiltro(@RequestHeader("Authorization") String auth) {
+public List<ProjetoResposta> listarProjetosFiltro(@RequestHeader("Authorization") String auth) {
     String token = auth.replace("Bearer ", "");
-    tokens.extrairClaims(token);
-    return service.listarProjetosFiltro();
+    User usertoken = tokens.extrairClaims(token);
+    return service.listarProjetosFiltro(usertoken.getId());
 }
 @GetMapping("/listarId/{id}")
 public ProjetoResposta listarProjetoId(@RequestHeader("Authorization") String auth, @PathVariable Long id) {
     String token = auth.replace("Bearer ", "");
     tokens.extrairClaims(token);
     return service.projetoPorId(id);
+}
+@GetMapping("/listarFiltroUser")
+public List<ProjetoResposta> listarProjetosFiltroUsuario(@RequestHeader("Authorization") String auth) {
+    String token = auth.replace("Bearer ", "");
+    User usertoken = tokens.extrairClaims(token);
+    return service.listarProjetosUsuario(usertoken.getId());
 }
 }

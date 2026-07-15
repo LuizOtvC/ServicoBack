@@ -68,8 +68,8 @@ public class ProjetoService {
         return projetoRepository.findAll();
     }
 
-    public List<ProjetoResposta> listarProjetosFiltro() {
-    List<ProjetoDto> projetos = projetoRepository.findByStatus(ProjetoDto.Status.ABERTO);
+    public List<ProjetoResposta> listarProjetosFiltro(Long id) {
+    List<ProjetoDto> projetos = projetoRepository.findByStatusAndUsuarioIdIdNot(ProjetoDto.Status.ABERTO, id);
     List<ProjetoResposta> resultado = new ArrayList<>();
 
     for (ProjetoDto p : projetos) {
@@ -116,6 +116,31 @@ public class ProjetoService {
         p.getScoreRisco(),
         p.getCriadoEm()
     );
+}
+   public List<ProjetoResposta> listarProjetosUsuario(Long id) {
+    List<ProjetoDto> projetos = projetoRepository.findByStatusAndUsuarioIdId(ProjetoDto.Status.ABERTO, id);
+    List<ProjetoResposta> resultado = new ArrayList<>();
+
+    for (ProjetoDto p : projetos) {
+        List<String> servicos = new ArrayList<>();
+        List<ProjetoServicoDto> ps = projetoServicoRepository.findByProjetoId(p.getId());
+        for (ProjetoServicoDto s : ps) {
+            servicos.add(s.getServico().getNome());
+        }
+        resultado.add(new ProjetoResposta(
+            p.getId(),
+        p.getTitulo(),
+        p.getDescricao(),
+        p.getOrcamento(),
+        p.getHorasEstimadas(),
+        p.getStatus().name(),
+        servicos,
+        p.getUsuarioId().getId(),
+        p.getScoreRisco(),
+        p.getCriadoEm()
+        ));
+    }
+    return resultado;
 }
 }
      

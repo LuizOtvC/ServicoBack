@@ -12,7 +12,9 @@ import com.main.servicoFinal.service.TokenService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,6 +52,34 @@ public List<PropostaRespostaDto> listarProjetoFiltro(@RequestHeader("Authorizati
     return service.listarPropostasPendentes(usertoken.getId());
 }
 
+    @PutMapping("/aceitar/{id}")
+public void aceitarProposta(@PathVariable Long id, @RequestHeader("Authorization") String auth) {
+    String token = auth.replace("Bearer ", "");
+    tokens.extrairClaims(token);
+    service.aceitarProposta(id, token);
+}
 
+@GetMapping("/listarPropostas")
+public List<PropostaRespostaDto> listarPropostas(@RequestHeader("Authorization") String auth) {
+    String token = auth.replace("Bearer ", "");
+    
+    tokens.extrairClaims(token);
+    User usertoken = tokens.extrairClaims(token);
+   
+    return service.listarPropostasUsuario(usertoken.getId());
+}
+@PutMapping("/cancelar/{id}")
+public void cancelarProposta(@PathVariable Long id, @RequestHeader("Authorization") String auth) {
+    String token = auth.replace("Bearer ", "");
+    tokens.extrairClaims(token);
+    service.cancelarProposta(id, token);
+}
+
+@PutMapping("/recusar/{id}")
+public void recusarProposta(@PathVariable Long id, @RequestHeader("Authorization") String auth) {
+    String token = auth.replace("Bearer ", "");
+    tokens.extrairClaims(token);
+    service.RecusarProposta(id, token);
+}
     
 }

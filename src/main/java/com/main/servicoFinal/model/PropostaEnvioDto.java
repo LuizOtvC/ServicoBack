@@ -11,6 +11,7 @@ package com.main.servicoFinal.model;
 public class PropostaEnvioDto {
     private Long projetoId;
     private Double valorProposto;
+    
     private String descricao;
 
     public Long getProjetoId() { 

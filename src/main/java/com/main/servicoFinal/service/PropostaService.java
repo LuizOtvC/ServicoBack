@@ -13,7 +13,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  *
@@ -59,6 +61,46 @@ public class PropostaService {
         ));
     }
     return resultado;
+}
+    
+    public void aceitarProposta(Long id, String token) {
+    PropostaDto proposta = propostaRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Proposta não encontrada"));
+    proposta.setStatus(PropostaDto.Status.ACEITA);
+    propostaRepository.save(proposta);
+}
+    
+    public List<PropostaRespostaDto> listarPropostasUsuario(Long usuarioId) {
+    List<PropostaDto> propostas = propostaRepository.findByUsuarioId(usuarioId);
+    List<PropostaRespostaDto> resultado = new ArrayList<>();
+    for (PropostaDto p : propostas) {
+        resultado.add(new PropostaRespostaDto(
+            p.getId(),
+            p.getProjeto().getId(),
+            p.getProjeto().getTitulo(),
+            p.getUsuario().getId(),
+            p.getUsuario().getNome(),
+            p.getValorProposto(),
+            p.getDescricao(),
+            p.getStatus().name(),
+            p.getEnviadoEm()
+        ));
+    }
+    return resultado;
+}
+    
+     public void cancelarProposta(Long id, String token) {
+    PropostaDto proposta = propostaRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Proposta não encontrada"));
+    proposta.setStatus(PropostaDto.Status.CANCELADA);
+    propostaRepository.save(proposta);
+}
+     
+     public void RecusarProposta(Long id, String token) {
+    PropostaDto proposta = propostaRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Proposta não encontrada"));
+    proposta.setStatus(PropostaDto.Status.RECUSADA);
+    propostaRepository.save(proposta);
 }
     
 }
