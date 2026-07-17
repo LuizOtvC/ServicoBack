@@ -6,6 +6,7 @@ package com.main.servicoFinal.service;
 
 import com.main.servicoFinal.model.PropostaDto;
 import com.main.servicoFinal.model.PropostaRespostaDto;
+import com.main.servicoFinal.repository.MensagemRepository;
 import com.main.servicoFinal.repository.ProjetoRepository;
 import com.main.servicoFinal.repository.PropostaRepository;
 import com.main.servicoFinal.repository.UserRepository;
@@ -32,8 +33,14 @@ public class PropostaService {
 
     @Autowired
     private ProjetoRepository projetoRepository;
+    
+    @Autowired
+    private MensagemService mensagemService;
 
     public void criarProposta(Long usuarioId, Long projetoId, Double valorProposto, String descricao) {
+        if (propostaRepository.existsByUsuarioIdAndProjetoId(usuarioId, projetoId)) {
+        throw new IllegalStateException("Você já enviou uma proposta para este projeto.");
+    }
         PropostaDto proposta = new PropostaDto();
         proposta.setUsuario(userRepository.getReferenceById(usuarioId));
         proposta.setProjeto(projetoRepository.getReferenceById(projetoId));
@@ -42,6 +49,7 @@ public class PropostaService {
         proposta.setStatus(PropostaDto.Status.PENDENTE);
         proposta.setEnviadoEm(LocalDateTime.now());
         propostaRepository.save(proposta);
+        mensagemService.PropostaEnviada(proposta);
     }
     
     public List<PropostaRespostaDto> listarPropostasPendentes(Long usuarioId) {
@@ -68,6 +76,7 @@ public class PropostaService {
         .orElseThrow(() -> new RuntimeException("Proposta não encontrada"));
     proposta.setStatus(PropostaDto.Status.ACEITA);
     propostaRepository.save(proposta);
+    mensagemService.PropostaAceita(proposta);
 }
     
     public List<PropostaRespostaDto> listarPropostasUsuario(Long usuarioId) {
@@ -94,6 +103,7 @@ public class PropostaService {
         .orElseThrow(() -> new RuntimeException("Proposta não encontrada"));
     proposta.setStatus(PropostaDto.Status.CANCELADA);
     propostaRepository.save(proposta);
+    mensagemService.PropostaCancelada(proposta);
 }
      
      public void RecusarProposta(Long id, String token) {
@@ -101,6 +111,10 @@ public class PropostaService {
         .orElseThrow(() -> new RuntimeException("Proposta não encontrada"));
     proposta.setStatus(PropostaDto.Status.RECUSADA);
     propostaRepository.save(proposta);
+    mensagemService.PropostaRecusada(proposta);
+}
+     public boolean existeProposta(Long usuarioId, Long projetoId) {
+    return propostaRepository.existsByUsuarioIdAndProjetoId(usuarioId, projetoId);
 }
     
 }

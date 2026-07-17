@@ -81,4 +81,10 @@ public void ConcluidoProjeto(@PathVariable Long id, @RequestHeader("Authorizatio
     tokens.extrairClaims(token);
     service.projetoConcluido(id, token);
 }
+@PutMapping("/cancelar/{id}")
+public void CanceladoProjeto(@PathVariable Long id, @RequestHeader("Authorization") String auth) {
+    String token = auth.replace("Bearer ", "");
+    tokens.extrairClaims(token);
+    service.projetoCancelado(id, token);
+}
 }

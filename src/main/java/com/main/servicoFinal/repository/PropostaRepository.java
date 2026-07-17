@@ -4,6 +4,7 @@
  */
 package com.main.servicoFinal.repository;
 
+import com.main.servicoFinal.model.ProjetoDto;
 import com.main.servicoFinal.model.PropostaDto;
 import java.util.List;
 import java.util.Optional;
@@ -19,5 +20,7 @@ public interface PropostaRepository extends JpaRepository<PropostaDto, Long>{
 List<PropostaDto> findByProjetoUsuarioIdIdAndStatus(Long usuarioId, PropostaDto.Status status);
 List<PropostaDto> findByUsuarioId(Long usuarioId);
 Optional<PropostaDto> findByProjeto_IdAndStatus(Long id, PropostaDto.Status status);
+Optional<PropostaDto> findByProjetoAndStatus(ProjetoDto projeto,PropostaDto.Status status);
+boolean existsByUsuarioIdAndProjetoId(Long usuarioId, Long projetoId);
     
 }

@@ -49,6 +49,9 @@ public class ProjetoService {
     @Autowired
     private PropostaRepository propostaRepository;
     
+    @Autowired
+    private MensagemService mensagemService;
+    
     public void criarProjeto(Long usuarioId, ProjetoUserDto dados) {
     ProjetoDto projeto = new ProjetoDto();
     projeto.setUsuarioId(user.getReferenceById(usuarioId));
@@ -60,6 +63,7 @@ public class ProjetoService {
     projeto.setStatus(ProjetoDto.Status.ABERTO);
     projeto.setScoreRisco(0);
     projetoRepository.save(projeto);
+    mensagemService.ProjetoCriado(projeto);
     
     for (Long servicoId : dados.getServicosId()) {
         ProjetoServicoDto ps = new ProjetoServicoDto();
@@ -170,16 +174,42 @@ public class ProjetoService {
 }
    
    public void projetoEmAndamento(Long id, String token) {
-    ProjetoDto proposta = projetoRepository.findById(id)
+    ProjetoDto projeto = projetoRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("Projeto não encontrado"));
-    proposta.setStatus(ProjetoDto.Status.EM_ANDAMENTO);
-    projetoRepository.save(proposta);
+    projeto.setStatus(ProjetoDto.Status.EM_ANDAMENTO);
+    projetoRepository.save(projeto);
+    mensagemService.ProjetoEmAndamento(projeto);
+    
+    PropostaDto proposta = propostaRepository
+    .findByProjetoAndStatus(projeto, PropostaDto.Status.ACEITA)
+    .orElseThrow(() -> new RuntimeException("Nenhuma proposta aceita encontrada"));
+    mensagemService.ProjetoEmAndamentoProposta(proposta);
 }
    public void projetoConcluido(Long id, String token) {
-    ProjetoDto proposta = projetoRepository.findById(id)
+    ProjetoDto projeto = projetoRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("Projeto não encontrado"));
-    proposta.setStatus(ProjetoDto.Status.CONCLUIDO);
-    projetoRepository.save(proposta);
+    projeto.setStatus(ProjetoDto.Status.CONCLUIDO);
+    projetoRepository.save(projeto);
+    mensagemService.ProjetoConcluido(projeto);
+    
+    PropostaDto proposta = propostaRepository
+    .findByProjetoAndStatus(projeto, PropostaDto.Status.ACEITA)
+    .orElseThrow(() -> new RuntimeException("Nenhuma proposta aceita encontrada"));
+    mensagemService.ProjetoConcluidoProposta(proposta);
+}
+   
+   public void projetoCancelado(Long id, String token) {
+    ProjetoDto projeto = projetoRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Projeto não encontrado"));
+    projeto.setStatus(ProjetoDto.Status.CANCELADO);
+    projetoRepository.save(projeto);
+    mensagemService.ProjetoCancelado(projeto);
+
+    propostaRepository
+        .findByProjetoAndStatus(projeto, PropostaDto.Status.ACEITA)
+        .ifPresent(proposta -> mensagemService.ProjetoCanceladoProposta(proposta));
+    
+    
 }
 }
      
