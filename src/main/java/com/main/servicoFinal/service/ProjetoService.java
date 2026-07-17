@@ -52,6 +52,9 @@ public class ProjetoService {
     @Autowired
     private MensagemService mensagemService;
     
+    @Autowired
+    private PropostaService propostaService;
+    
     public void criarProjeto(Long usuarioId, ProjetoUserDto dados) {
     ProjetoDto projeto = new ProjetoDto();
     projeto.setUsuarioId(user.getReferenceById(usuarioId));
@@ -188,28 +191,28 @@ public class ProjetoService {
    public void projetoConcluido(Long id, String token) {
     ProjetoDto projeto = projetoRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("Projeto não encontrado"));
+
     projeto.setStatus(ProjetoDto.Status.CONCLUIDO);
     projetoRepository.save(projeto);
     mensagemService.ProjetoConcluido(projeto);
-    
-    PropostaDto proposta = propostaRepository
-    .findByProjetoAndStatus(projeto, PropostaDto.Status.ACEITA)
-    .orElseThrow(() -> new RuntimeException("Nenhuma proposta aceita encontrada"));
-    mensagemService.ProjetoConcluidoProposta(proposta);
+
+    propostaRepository.findByProjetoAndStatus(projeto, PropostaDto.Status.ACEITA)
+        .ifPresent(proposta -> mensagemService.ProjetoConcluidoProposta(proposta));
 }
    
-   public void projetoCancelado(Long id, String token) {
+   public void projetoCancelado(Long id) {
     ProjetoDto projeto = projetoRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("Projeto não encontrado"));
     projeto.setStatus(ProjetoDto.Status.CANCELADO);
     projetoRepository.save(projeto);
     mensagemService.ProjetoCancelado(projeto);
 
-    propostaRepository
-        .findByProjetoAndStatus(projeto, PropostaDto.Status.ACEITA)
-        .ifPresent(proposta -> mensagemService.ProjetoCanceladoProposta(proposta));
-    
-    
+    List<PropostaDto> propostas = propostaRepository.findByProjeto(projeto);
+    for (PropostaDto proposta : propostas) {
+        if (proposta.getStatus() == PropostaDto.Status.PENDENTE || proposta.getStatus() == PropostaDto.Status.ACEITA) {
+            propostaService.cancelarProposta(proposta.getId());
+        }
+    }
 }
 }
      

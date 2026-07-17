@@ -71,7 +71,7 @@ public class PropostaService {
     return resultado;
 }
     
-    public void aceitarProposta(Long id, String token) {
+    public void aceitarProposta(Long id) {
     PropostaDto proposta = propostaRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("Proposta não encontrada"));
     proposta.setStatus(PropostaDto.Status.ACEITA);
@@ -98,7 +98,7 @@ public class PropostaService {
     return resultado;
 }
     
-     public void cancelarProposta(Long id, String token) {
+     public void cancelarProposta(Long id) {
     PropostaDto proposta = propostaRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("Proposta não encontrada"));
     proposta.setStatus(PropostaDto.Status.CANCELADA);
@@ -106,7 +106,7 @@ public class PropostaService {
     mensagemService.PropostaCancelada(proposta);
 }
      
-     public void RecusarProposta(Long id, String token) {
+     public void RecusarProposta(Long id) {
     PropostaDto proposta = propostaRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("Proposta não encontrada"));
     proposta.setStatus(PropostaDto.Status.RECUSADA);

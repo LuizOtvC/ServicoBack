@@ -7,7 +7,6 @@ package com.main.servicoFinal.controller;
 import com.main.servicoFinal.model.PropostaEnvioDto;
 import com.main.servicoFinal.model.PropostaRespostaDto;
 import com.main.servicoFinal.model.User;
-import com.main.servicoFinal.service.MensagemService;
 import com.main.servicoFinal.service.PropostaService;
 import com.main.servicoFinal.service.TokenService;
 import java.util.List;
@@ -36,8 +35,7 @@ public class PropostaController {
     @Autowired
     private TokenService tokens;
     
-    @Autowired
-    private MensagemService mensagem;
+   
     
     @PostMapping("/criar")
     public void CriarProposta( @RequestBody PropostaEnvioDto dados, @RequestHeader("Authorization") String auth){
@@ -60,7 +58,7 @@ public List<PropostaRespostaDto> listarProjetoFiltro(@RequestHeader("Authorizati
 public void aceitarProposta(@PathVariable Long id, @RequestHeader("Authorization") String auth) {
     String token = auth.replace("Bearer ", "");
     tokens.extrairClaims(token);
-    service.aceitarProposta(id, token); 
+    service.aceitarProposta(id); 
 }
 
 @GetMapping("/listarPropostas")
@@ -76,14 +74,21 @@ public List<PropostaRespostaDto> listarPropostas(@RequestHeader("Authorization")
 public void cancelarProposta(@PathVariable Long id, @RequestHeader("Authorization") String auth) {
     String token = auth.replace("Bearer ", "");
     tokens.extrairClaims(token);
-    service.cancelarProposta(id, token);
+    service.cancelarProposta(id);
 }
 
 @PutMapping("/recusar/{id}")
 public void recusarProposta(@PathVariable Long id, @RequestHeader("Authorization") String auth) {
     String token = auth.replace("Bearer ", "");
     tokens.extrairClaims(token);
-    service.RecusarProposta(id, token);
+    service.RecusarProposta(id);
+}
+
+@GetMapping("/existe/{id}")
+public boolean existeProposta(@PathVariable Long id, @RequestHeader("Authorization") String auth) {
+    String token = auth.replace("Bearer ", "");
+    User usertoken = tokens.extrairClaims(token);
+    return service.existeProposta(usertoken.getId(), id);
 }
     
 }

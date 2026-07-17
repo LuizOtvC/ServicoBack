@@ -16,6 +16,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface ProjetoRepository extends JpaRepository<ProjetoDto, Long> {
     List<ProjetoDto> findByStatusAndUsuarioIdIdNot(ProjetoDto.Status status, Long usuarioId);
     List<ProjetoDto> findByUsuarioIdId(Long usuarioId);
+    
    
     
 }
