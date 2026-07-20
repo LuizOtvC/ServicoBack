@@ -22,36 +22,31 @@ import java.time.LocalDateTime;
  * @author Mateus
  */
 @Entity
-@Table(name = "mensagem")
-public class MensagemDto {
-    
+@Table(name = "match_resultado")
+public class MatchResultadoDto {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)
     private User usuarioId;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "projeto_id", nullable = false)
     private ProjetoDto projetoId;
-    
-    @Column (nullable = false, length = 200)
-    private String mensagem;  
-    
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Status status;
-    
-    @Column(nullable = false, name = "enviado_em")
-    private LocalDateTime enviadoEm;
- 
 
-    public enum Status {
-        ACEITA, RECUSADA, CANCELADA, EM_ANDAMENTO, CONCLUIDO, CANCELADO, CRIADO, ENVIADA, PROPOSTA
-    }   
-    
+    @Column(nullable = false, name = "score_total")
+    private Double scoreTotal;
+
+    @Column(nullable = false, name = "score_servicos")
+    private Double scoreServico;
+
+    @Column(nullable = false, name = "score_orcamento")
+    private Double scoreOrcamento;
+
+    @Column(nullable = false, name = "score_historico")
+    private Double scoreHistorico;
 
     public Long getId() {
         return id;
@@ -77,30 +72,36 @@ public class MensagemDto {
         this.projetoId = projetoId;
     }
 
-    public String getMensagem() {
-        return mensagem;
+    public Double getScoreTotal() {
+        return scoreTotal;
     }
 
-    public void setMensagem(String mensagem) {
-        this.mensagem = mensagem;
+    public void setScoreTotal(Double scoreTotal) {
+        this.scoreTotal = scoreTotal;
     }
 
-    public Status getStatus() {
-        return status;
+    public Double getScoreServico() {
+        return scoreServico;
     }
 
-    public void setStatus(Status status) {
-        this.status = status;
+    public void setScoreServico(Double scoreServico) {
+        this.scoreServico = scoreServico;
     }
 
-    public LocalDateTime getEnviadoEm() {
-        return enviadoEm;
+    public Double getScoreOrcamento() {
+        return scoreOrcamento;
     }
 
-    public void setEnviadoEm(LocalDateTime enviadoEm) {
-        this.enviadoEm = enviadoEm;
+    public void setScoreOrcamento(Double scoreOrcamento) {
+        this.scoreOrcamento = scoreOrcamento;
     }
-    
-    
-    
+
+    public Double getScoreHistorico() {
+        return scoreHistorico;
+    }
+
+    public void setScoreHistorico(Double scoreHistorico) {
+        this.scoreHistorico = scoreHistorico;
+    }
+
 }

@@ -36,6 +36,9 @@ public class PropostaService {
     
     @Autowired
     private MensagemService mensagemService;
+    
+    @Autowired
+    private MatchService matchService;
 
     public void criarProposta(Long usuarioId, Long projetoId, Double valorProposto, String descricao) {
         if (propostaRepository.existsByUsuarioIdAndProjetoId(usuarioId, projetoId)) {
@@ -49,7 +52,9 @@ public class PropostaService {
         proposta.setStatus(PropostaDto.Status.PENDENTE);
         proposta.setEnviadoEm(LocalDateTime.now());
         propostaRepository.save(proposta);
+        matchService.calcularMatch(usuarioId, projetoId, valorProposto);
         mensagemService.PropostaEnviada(proposta);
+        mensagemService.novaProposta(proposta);
     }
     
     public List<PropostaRespostaDto> listarPropostasPendentes(Long usuarioId) {
@@ -74,6 +79,13 @@ public class PropostaService {
     public void aceitarProposta(Long id) {
     PropostaDto proposta = propostaRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("Proposta não encontrada"));
+    boolean jaTemCandidato = propostaRepository
+        .existsByProjetoIdAndStatus(proposta.getProjeto().getId(), PropostaDto.Status.ACEITA);
+
+    if (jaTemCandidato) {
+        throw new ResponseStatusException(HttpStatus.CONFLICT, "Este projeto já possui um candidato aceito");
+    }
+
     proposta.setStatus(PropostaDto.Status.ACEITA);
     propostaRepository.save(proposta);
     mensagemService.PropostaAceita(proposta);

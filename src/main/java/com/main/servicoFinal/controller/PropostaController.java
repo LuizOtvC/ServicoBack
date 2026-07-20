@@ -6,7 +6,9 @@ package com.main.servicoFinal.controller;
 
 import com.main.servicoFinal.model.PropostaEnvioDto;
 import com.main.servicoFinal.model.PropostaRespostaDto;
+import com.main.servicoFinal.model.PropostaScoreDto;
 import com.main.servicoFinal.model.User;
+import com.main.servicoFinal.service.MatchService;
 import com.main.servicoFinal.service.PropostaService;
 import com.main.servicoFinal.service.TokenService;
 import java.util.List;
@@ -34,6 +36,9 @@ public class PropostaController {
     
     @Autowired
     private TokenService tokens;
+    
+    @Autowired
+    private MatchService serviceMatch;
     
    
     
@@ -90,5 +95,10 @@ public boolean existeProposta(@PathVariable Long id, @RequestHeader("Authorizati
     User usertoken = tokens.extrairClaims(token);
     return service.existeProposta(usertoken.getId(), id);
 }
-    
+    @GetMapping("/propostas/{id}")
+    public List<PropostaScoreDto> listarPropostasComScore(@PathVariable Long id, @RequestHeader("Authorization") String auth) {
+        String token = auth.replace("Bearer ", "");
+        tokens.extrairClaims(token);
+        return serviceMatch.listarPropostasComScore(id);
+    }
 }

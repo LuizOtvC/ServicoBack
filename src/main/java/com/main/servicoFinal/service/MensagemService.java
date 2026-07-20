@@ -154,7 +154,7 @@ public class MensagemService {
      
     
    public List<MensagemRespostaDto> listarMensagens(Long usuarioId) {
-        List<MensagemDto> mensagens = mensagemRepository.findByUsuarioIdId(usuarioId);
+        List<MensagemDto> mensagens = mensagemRepository.findByUsuarioIdIdOrderByIdDesc(usuarioId);
         List<MensagemRespostaDto> resultado = new ArrayList<>();
 
         for (MensagemDto m : mensagens) {
@@ -172,4 +172,15 @@ public class MensagemService {
    public void deletarMensagem(Long id) {
     mensagemRepository.deleteById(id);  
 }
+   
+   public void novaProposta(PropostaDto proposta) {
+    MensagemDto mensagem = new MensagemDto();
+    mensagem.setUsuarioId(proposta.getProjeto().getUsuarioId());
+    mensagem.setProjetoId(proposta.getProjeto());
+    mensagem.setMensagem("Você recebeu uma nova proposta de " + proposta.getUsuario().getNome() + " para o projeto " + proposta.getProjeto().getTitulo());
+    mensagem.setStatus(MensagemDto.Status.PROPOSTA);
+    mensagem.setEnviadoEm(LocalDateTime.now());
+    mensagemRepository.save(mensagem);
+}
+   
 }
