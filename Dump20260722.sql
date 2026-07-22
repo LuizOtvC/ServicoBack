@@ -61,16 +61,16 @@ CREATE TABLE `match_resultado` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `usuario_id` bigint NOT NULL,
   `projeto_id` bigint NOT NULL,
-  `score_total` decimal(5,2) NOT NULL,
-  `score_servicos` decimal(5,2) NOT NULL,
-  `score_orcamento` decimal(5,2) NOT NULL,
-  `score_historico` decimal(5,2) NOT NULL,
+  `score_total` double NOT NULL,
+  `score_servicos` double NOT NULL,
+  `score_orcamento` double NOT NULL,
+  `score_historico` double NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_match` (`usuario_id`,`projeto_id`),
   KEY `fk_match_projeto` (`projeto_id`),
   CONSTRAINT `fk_match_projeto` FOREIGN KEY (`projeto_id`) REFERENCES `projeto` (`id`) ON DELETE CASCADE,
   CONSTRAINT `fk_match_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -79,6 +79,7 @@ CREATE TABLE `match_resultado` (
 
 LOCK TABLES `match_resultado` WRITE;
 /*!40000 ALTER TABLE `match_resultado` DISABLE KEYS */;
+INSERT INTO `match_resultado` VALUES (1,2,1,0.6124999999999999,0.75,1,0);
 /*!40000 ALTER TABLE `match_resultado` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -93,7 +94,7 @@ CREATE TABLE `mensagem` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `usuario_id` bigint NOT NULL,
   `projeto_id` bigint NOT NULL,
-  `mensagem` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `mensagem` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL,
   `status` enum('ACEITA','RECUSADA','CANCELADA','EM_ANDAMENTO','CONCLUIDO','CANCELADO','CRIADO','ENVIADA','PROPOSTA') COLLATE utf8mb4_unicode_ci NOT NULL,
   `enviado_em` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
@@ -101,7 +102,7 @@ CREATE TABLE `mensagem` (
   KEY `usuario_id` (`usuario_id`),
   CONSTRAINT `mensagem_ibfk_1` FOREIGN KEY (`projeto_id`) REFERENCES `projeto` (`id`) ON DELETE CASCADE,
   CONSTRAINT `mensagem_ibfk_2` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=460 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -110,7 +111,7 @@ CREATE TABLE `mensagem` (
 
 LOCK TABLES `mensagem` WRITE;
 /*!40000 ALTER TABLE `mensagem` DISABLE KEYS */;
-INSERT INTO `mensagem` VALUES (352,1,2,'Proposta enviada com sucesso','ENVIADA','2026-07-17 00:59:23'),(402,1,152,'Projeto criado com succeso','CRIADO','2026-07-17 17:06:07'),(452,2,152,'Proposta enviada com sucesso','ENVIADA','2026-07-17 17:14:15'),(453,1,152,'Projeto cancelado com sucesso','CANCELADO','2026-07-17 17:15:40'),(454,2,152,'Sua proposta foi cancelada','CANCELADA','2026-07-17 17:15:40'),(455,1,202,'Projeto criado com succeso','CRIADO','2026-07-17 17:16:09'),(456,2,202,'Proposta enviada com sucesso','ENVIADA','2026-07-17 17:16:53'),(457,2,202,'Sua proposta foi aceita!!','ACEITA','2026-07-17 17:17:19'),(458,1,202,'Projeto cancelado com sucesso','CANCELADO','2026-07-17 17:17:28'),(459,2,202,'Sua proposta foi cancelada','CANCELADA','2026-07-17 17:17:28');
+INSERT INTO `mensagem` VALUES (1,1,1,'Projeto criado com succeso','CRIADO','2026-07-21 19:26:48'),(2,2,1,'Proposta enviada com sucesso','ENVIADA','2026-07-22 14:32:38'),(3,1,1,'Você recebeu uma nova proposta de João Silva para o projeto Preciso de um eletricista','PROPOSTA','2026-07-22 14:32:38');
 /*!40000 ALTER TABLE `mensagem` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -132,7 +133,7 @@ CREATE TABLE `mensagem_seq` (
 
 LOCK TABLES `mensagem_seq` WRITE;
 /*!40000 ALTER TABLE `mensagem_seq` DISABLE KEYS */;
-INSERT INTO `mensagem_seq` VALUES (551);
+INSERT INTO `mensagem_seq` VALUES (101);
 /*!40000 ALTER TABLE `mensagem_seq` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -149,14 +150,13 @@ CREATE TABLE `projeto` (
   `titulo` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL,
   `descricao` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `orcamento` double NOT NULL,
-  `horas_estimadas` int NOT NULL,
   `status` enum('ABERTO','EM_ANDAMENTO','CONCLUIDO','CANCELADO') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'ABERTO',
   `score_risco` int NOT NULL DEFAULT '0',
   `criado_em` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `fk_projeto_usuario` (`usuario_id`),
   CONSTRAINT `fk_projeto_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=203 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -165,8 +165,34 @@ CREATE TABLE `projeto` (
 
 LOCK TABLES `projeto` WRITE;
 /*!40000 ALTER TABLE `projeto` DISABLE KEYS */;
-INSERT INTO `projeto` VALUES (1,1,'Teste','apenas um teste',100,12,'EM_ANDAMENTO',0,'2026-07-16 17:25:39'),(2,2,'Nossa','nossa',232,2,'ABERTO',0,'2026-07-16 17:49:14'),(52,1,'Caramba','testesOa',343,2,'CONCLUIDO',0,'2026-07-16 18:49:45'),(102,1,'ai meu cool','oi',100,7,'CANCELADO',0,'2026-07-17 00:29:57'),(152,1,'testes','wdas',324,3,'CANCELADO',0,'2026-07-17 17:06:06'),(202,1,'dfg','gfdg',234,3,'CANCELADO',0,'2026-07-17 17:16:09');
+INSERT INTO `projeto` VALUES (1,1,'Preciso de um eletricista','sqdas',100,'ABERTO',0,'2026-07-21 19:26:48');
 /*!40000 ALTER TABLE `projeto` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `projeto_dia_trabalho`
+--
+
+DROP TABLE IF EXISTS `projeto_dia_trabalho`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `projeto_dia_trabalho` (
+  `projeto_id` bigint NOT NULL,
+  `dia_semana` enum('DOMINGO','SEGUNDA','TERCA','QUARTA','QUINTA','SEXTA','SABADO') COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`projeto_id`,`dia_semana`),
+  UNIQUE KEY `UK2bph03pp6ubhx50nisi8sbgih` (`projeto_id`,`dia_semana`),
+  CONSTRAINT `fk_projeto_dia` FOREIGN KEY (`projeto_id`) REFERENCES `projeto` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `projeto_dia_trabalho`
+--
+
+LOCK TABLES `projeto_dia_trabalho` WRITE;
+/*!40000 ALTER TABLE `projeto_dia_trabalho` DISABLE KEYS */;
+INSERT INTO `projeto_dia_trabalho` VALUES (1,'SEGUNDA'),(1,'TERCA'),(1,'QUARTA'),(1,'QUINTA'),(1,'SEXTA');
+/*!40000 ALTER TABLE `projeto_dia_trabalho` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -187,7 +213,7 @@ CREATE TABLE `projeto_seq` (
 
 LOCK TABLES `projeto_seq` WRITE;
 /*!40000 ALTER TABLE `projeto_seq` DISABLE KEYS */;
-INSERT INTO `projeto_seq` VALUES (301);
+INSERT INTO `projeto_seq` VALUES (51);
 /*!40000 ALTER TABLE `projeto_seq` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -214,7 +240,7 @@ CREATE TABLE `projeto_servico` (
 
 LOCK TABLES `projeto_servico` WRITE;
 /*!40000 ALTER TABLE `projeto_servico` DISABLE KEYS */;
-INSERT INTO `projeto_servico` VALUES (52,4),(152,4),(202,5),(1,6),(2,7),(102,8);
+INSERT INTO `projeto_servico` VALUES (1,1);
 /*!40000 ALTER TABLE `projeto_servico` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -238,7 +264,7 @@ CREATE TABLE `proposta` (
   KEY `fk_proposta_projeto` (`projeto_id`),
   CONSTRAINT `fk_proposta_projeto` FOREIGN KEY (`projeto_id`) REFERENCES `projeto` (`id`) ON DELETE CASCADE,
   CONSTRAINT `fk_proposta_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -247,7 +273,7 @@ CREATE TABLE `proposta` (
 
 LOCK TABLES `proposta` WRITE;
 /*!40000 ALTER TABLE `proposta` DISABLE KEYS */;
-INSERT INTO `proposta` VALUES (1,2,1,200,'dalhe','ACEITA','2026-07-16 17:26:28'),(2,1,2,122,'fc','RECUSADA','2026-07-16 17:50:06'),(3,2,52,122,'wdfasd','ACEITA','2026-07-16 18:50:02'),(4,1,2,222,'testes','PENDENTE','2026-07-17 00:59:23'),(5,2,152,2,'23','CANCELADA','2026-07-17 17:14:15'),(6,2,202,3,'dsfw','CANCELADA','2026-07-17 17:16:53');
+INSERT INTO `proposta` VALUES (1,2,1,50,'eu goto de toma choque :)(me deixa entrar pls ;W)','PENDENTE','2026-07-22 14:32:38');
 /*!40000 ALTER TABLE `proposta` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -308,11 +334,11 @@ DROP TABLE IF EXISTS `usuario`;
 CREATE TABLE `usuario` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `nome` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `descricao` varchar(1000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `email` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
   `telefone` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
   `senha` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `reputacao` double NOT NULL,
-  `horas_semana` int DEFAULT NULL,
   `peso_servicos` double DEFAULT NULL,
   `peso_orcamento` double DEFAULT NULL,
   `peso_historico` double DEFAULT NULL,
@@ -328,8 +354,34 @@ CREATE TABLE `usuario` (
 
 LOCK TABLES `usuario` WRITE;
 /*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
-INSERT INTO `usuario` VALUES (1,'João Silva','joao@email.com','11999999999','12345',5,NULL,NULL,NULL,NULL),(2,'Teste','Teste@gmail.com','21321312','123456',5,NULL,NULL,NULL,NULL);
+INSERT INTO `usuario` VALUES (1,'João Silva',NULL,'joao@email.com','11999999999','12345',5,NULL,NULL,NULL),(2,'João Silva','Eu gosto de tomar choque..., tipo o super choque ou o shazam sla prr kkkkkkkkk','Teste@gmail.com','21321312','12345',5,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `usuario_dia_trabalho`
+--
+
+DROP TABLE IF EXISTS `usuario_dia_trabalho`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `usuario_dia_trabalho` (
+  `usuario_id` bigint NOT NULL,
+  `dia_semana` enum('DOMINGO','SEGUNDA','TERCA','QUARTA','QUINTA','SEXTA','SABADO') COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`usuario_id`,`dia_semana`),
+  UNIQUE KEY `UKoa71kfmxq5jo6nh6b3gqsgrpd` (`usuario_id`,`dia_semana`),
+  CONSTRAINT `usuario_dia_trabalho_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `usuario_dia_trabalho`
+--
+
+LOCK TABLES `usuario_dia_trabalho` WRITE;
+/*!40000 ALTER TABLE `usuario_dia_trabalho` DISABLE KEYS */;
+INSERT INTO `usuario_dia_trabalho` VALUES (2,'SEGUNDA'),(2,'TERCA'),(2,'QUARTA'),(2,'QUINTA'),(2,'SEXTA');
+/*!40000 ALTER TABLE `usuario_dia_trabalho` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -356,6 +408,7 @@ CREATE TABLE `usuario_servico` (
 
 LOCK TABLES `usuario_servico` WRITE;
 /*!40000 ALTER TABLE `usuario_servico` DISABLE KEYS */;
+INSERT INTO `usuario_servico` VALUES (2,1,'INTERMEDIARIO');
 /*!40000 ALTER TABLE `usuario_servico` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -368,4 +421,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-07-17 14:26:05
+-- Dump completed on 2026-07-22 15:37:08
