@@ -4,23 +4,21 @@
  */
 package com.main.servicoFinal.model;
 
-/**
- *
- * @author Mateus
- */
+import java.util.Set;
+
 public class UserUpd {
-    
+
     private String nome;
+    private String descricao;
     private String telefone;
-    private Integer horasSemana;
+    private Set<User.DiaSemana> diasTrabalho;
 
-    public UserUpd(String nome, String telefone, Integer horasSemana) {
+    public UserUpd(String nome, String descricao, String telefone, Set<User.DiaSemana> diasTrabalho) {
         this.nome = nome;
+        this.descricao = descricao;
         this.telefone = telefone;
-        this.horasSemana = horasSemana;
+        this.diasTrabalho = diasTrabalho;
     }
-
-    
 
     public UserUpd() {
     }
@@ -41,16 +39,19 @@ public class UserUpd {
         this.telefone = telefone;
     }
 
-    public Integer getHorasSemana() {
-        return horasSemana;
+    public String getDescricao() {
+        return descricao;
     }
 
-    public void setHorasSemana(Integer horasSemana) {
-        this.horasSemana = horasSemana;
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
     }
 
-  
+    public Set<User.DiaSemana> getDiasTrabalho() {
+        return diasTrabalho;
+    }
 
-    
-    
+    public void setDiasTrabalho(Set<User.DiaSemana> diasTrabalho) {
+        this.diasTrabalho = diasTrabalho;
+    }
 }

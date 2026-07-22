@@ -10,6 +10,7 @@ import com.main.servicoFinal.model.ProjetoServicoDto;
 import com.main.servicoFinal.model.PropostaDto;
 import com.main.servicoFinal.model.PropostaScoreDto;
 import com.main.servicoFinal.model.User;
+import com.main.servicoFinal.model.User.DiaSemana;
 import com.main.servicoFinal.model.UsuarioServicoDto;
 import com.main.servicoFinal.repository.MatchResultadoRepository;
 import com.main.servicoFinal.repository.ProjetoRepository;
@@ -18,8 +19,10 @@ import com.main.servicoFinal.repository.PropostaRepository;
 import com.main.servicoFinal.repository.UserRepository;
 import com.main.servicoFinal.repository.UsuarioServicoRepository;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -52,6 +55,27 @@ public class MatchService {
 
         User usuario = userRepository.getReferenceById(usuarioId);
         ProjetoDto projeto = projetoRepository.getReferenceById(projetoId);
+        
+        Set<ProjetoDto.DiaSemana> diasProjeto = projeto.getDiasTrabalho();
+Set<DiaSemana> diasUsuario = usuario.getDiasTrabalho();
+
+        
+        double scoreDias;
+
+if (diasProjeto.isEmpty()) {
+    scoreDias = 1.0;
+} else {
+    long diasEmComum = diasProjeto.stream()
+            .filter(diasUsuario::contains)
+            .count();
+
+    if (diasEmComum == 0) {
+    scoreDias = 0.0;
+    
+} else {
+    scoreDias = (double) diasEmComum / diasProjeto.size();
+}
+}
 
         List<ProjetoServicoDto> servicosProjeto = projetoServicoRepository.findByProjetoId(projetoId);
         List<UsuarioServicoDto> servicosUsuario = usuarioServicoRepository.findByUsuarioId(usuarioId);
@@ -88,13 +112,14 @@ public class MatchService {
                 .countByUsuarioIdAndStatus(usuarioId, PropostaDto.Status.ACEITA);
         double scoreHistorico = Math.min(projetosConcluidos / 10.0, 1.0);
 
-        double scoreTotal = (scoreSkills * 0.35)
-                + (scoreOrcamento * 0.25)
-                + (scoreHistorico * 0.20)
-                + (usuario.getReputacao() / 5.0 * 0.10)
-                + (usuario.getHorasSemana() != null && projeto.getHorasEstimadas() != null
-                ? Math.min((double) usuario.getHorasSemana() / projeto.getHorasEstimadas(), 1.0) * 0.10
-                : 0.0);
+        double scoreTotal =
+        (scoreSkills * 0.30)
+      + (scoreOrcamento * 0.20)
+      + (scoreHistorico * 0.15)
+      + (usuario.getReputacao() / 5.0 * 0.10)
+      + (scoreDias * 0.25);
+        
+        
 
         MatchResultadoDto match = new MatchResultadoDto();
         match.setUsuarioId(usuario);
@@ -114,17 +139,40 @@ public class MatchService {
             Optional<MatchResultadoDto> match = matchRepository
                     .findByUsuarioIdIdAndProjetoIdId(p.getUsuario().getId(), projetoId);
 
+            List<String> dias = p.getUsuario().getDiasTrabalho()
+    .stream()
+    .sorted(Comparator.comparingInt(d -> switch (d) {
+        case DOMINGO -> 1;
+        case SEGUNDA -> 2;
+        case TERCA -> 3;
+        case QUARTA -> 4;
+        case QUINTA -> 5;
+        case SEXTA -> 6;
+        case SABADO -> 7;
+    }))
+    .map(d -> switch (d) {
+        case DOMINGO -> "DOMINGO";
+        case SEGUNDA -> "SEGUNDA";
+        case TERCA -> "TERÇA";
+        case QUARTA -> "QUARTA";
+        case QUINTA -> "QUINTA";
+        case SEXTA -> "SEXTA";
+        case SABADO -> "SÁBADO";
+    })
+    .toList();
             PropostaScoreDto dto = new PropostaScoreDto();
             dto.setPropostaId(p.getId());
             dto.setNomeUsuario(p.getUsuario().getNome());
             dto.setValorProposto(p.getValorProposto());
             dto.setDescricao(p.getDescricao());
+            dto.setDiasTrabalho(dias);
             dto.setStatus(p.getStatus().name());
             dto.setScoreTotal(match.isPresent() ? match.get().getScoreTotal() : 0.0);
             dto.setScoreServicos(match.isPresent() ? match.get().getScoreServico() : 0.0);
             dto.setScoreOrcamento(match.isPresent() ? match.get().getScoreOrcamento() : 0.0);
             dto.setScoreHistorico(match.isPresent() ? match.get().getScoreHistorico() : 0.0);
             dto.setUsuarioId(p.getUsuario().getId());
+            
             resultado.add(dto);
         }
 

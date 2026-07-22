@@ -2,7 +2,9 @@ package com.main.servicoFinal.model;
 
 import jakarta.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "usuario")
@@ -17,7 +19,7 @@ public class User {
 
     @Column(nullable = false, unique = true, length = 150)
     private String email;
-    
+
     @Column(nullable = false, unique = true, length = 150)
     private String telefone;
 
@@ -27,8 +29,6 @@ public class User {
     @Column(nullable = false)
     private Double reputacao = 5.0;
 
-    @Column(name = "horas_semana")
-    private Integer horasSemana;
 
     @Column(name = "peso_servicos")
     private Double pesoServicos;
@@ -38,14 +38,28 @@ public class User {
 
     @Column(name = "peso_historico")
     private Double pesoHistorico;
-    
+
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UsuarioServicoDto> servicos = new ArrayList<>();
 
-    public User() {
+    @Column(length = 1000)
+    private String descricao;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+@CollectionTable(
+        name = "usuario_dia_trabalho",
+        joinColumns = @JoinColumn(name = "usuario_id")
+)
+@Enumerated(EnumType.STRING)
+@Column(name = "dia_semana")
+private Set<DiaSemana> diasTrabalho = new HashSet<>();
+
+    public enum DiaSemana {
+        DOMINGO, SEGUNDA, TERCA, QUARTA, QUINTA, SEXTA, SABADO
     }
 
-    
+    public User() {
+    }
 
     public Long getId() {
         return id;
@@ -54,7 +68,6 @@ public class User {
     public void setId(Long id) {
         this.id = id;
     }
-    
 
     public String getNome() {
         return nome;
@@ -86,14 +99,6 @@ public class User {
 
     public void setReputacao(Double reputacao) {
         this.reputacao = reputacao;
-    }
-
-    public Integer getHorasSemana() {
-        return horasSemana;
-    }
-
-    public void setHorasSemana(Integer horasSemana) {
-        this.horasSemana = horasSemana;
     }
 
     public Double getPesoServicos() {
@@ -136,9 +141,23 @@ public class User {
         this.servicos = servicos;
     }
 
-    
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
+
+    public Set<DiaSemana> getDiasTrabalho() {
+        return diasTrabalho;
+    }
+
+    public void setDiasTrabalho(Set<DiaSemana> diasTrabalho) {
+        this.diasTrabalho = diasTrabalho;
+    }
 
     
-    
+
     
 }

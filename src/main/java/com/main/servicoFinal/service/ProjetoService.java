@@ -61,10 +61,10 @@ public class ProjetoService {
     projeto.setTitulo(dados.getTitulo());
     projeto.setDescricao(dados.getDescricao());
     projeto.setOrcamento(dados.getOrcamento());
-    projeto.setHorasEstimadas(dados.getHorasEstimadas());
     projeto.setCriadoEm(LocalDateTime.now());
     projeto.setStatus(ProjetoDto.Status.ABERTO);
     projeto.setScoreRisco(0);
+    projeto.setDiasTrabalho(dados.getDiasTrabalho());
     projetoRepository.save(projeto);
     mensagemService.ProjetoCriado(projeto);
     
@@ -88,23 +88,31 @@ public class ProjetoService {
     for (ProjetoDto p : projetos) {
         List<String> servicos = new ArrayList<>();
         List<ProjetoServicoDto> ps = projetoServicoRepository.findByProjetoId(p.getId());
+
         for (ProjetoServicoDto s : ps) {
             servicos.add(s.getServico().getNome());
         }
-        resultado.add(new ProjetoResposta(
-            p.getId(),
+
+        List<String> dias = p.getDiasTrabalho()
+        .stream()
+        .map(Enum::name)
+        .toList();
+
+resultado.add(new ProjetoResposta(
+        p.getId(),
         p.getTitulo(),
         p.getDescricao(),
         p.getOrcamento(),
-        p.getHorasEstimadas(),
         p.getStatus().name(),
         servicos,
         p.getUsuarioId().getId(),
         p.getScoreRisco(),
-        p.getCriadoEm()
-        
-        ));
+        p.getCriadoEm(),
+        dias,
+        null
+));
     }
+
     return resultado;
 }
     
@@ -117,19 +125,23 @@ public class ProjetoService {
     for (ProjetoServicoDto s : ps) {
         servicos.add(s.getServico().getNome());
     }
-
-    ProjetoResposta resposta = new ProjetoResposta(
-        p.getId(),
-        p.getTitulo(),
-        p.getDescricao(),
-        p.getOrcamento(),
-        p.getHorasEstimadas(),
-        p.getStatus().name(),
-        servicos,
-        p.getUsuarioId().getId(),
-        p.getScoreRisco(),
-        p.getCriadoEm()
-    );
+List<String> dias = p.getDiasTrabalho()
+        .stream()
+        .map(Enum::name)
+        .toList();
+   ProjetoResposta resposta = new ProjetoResposta(
+    p.getId(),
+    p.getTitulo(),
+    p.getDescricao(),
+    p.getOrcamento(),
+    p.getStatus().name(),
+    servicos,
+    p.getUsuarioId().getId(),
+    p.getScoreRisco(),
+    p.getCriadoEm(),
+    dias,
+    null
+);
 
     Optional<PropostaDto> propostaAceitaOpt = propostaRepository.findByProjeto_IdAndStatus(id, PropostaDto.Status.ACEITA);
 
@@ -160,18 +172,25 @@ public class ProjetoService {
         for (ProjetoServicoDto s : ps) {
             servicos.add(s.getServico().getNome());
         }
-        resultado.add(new ProjetoResposta(
-            p.getId(),
+        List<String> dias = p.getDiasTrabalho()
+    .stream()
+    .sorted()
+    .map(Enum::name)
+    .toList();
+
+resultado.add(new ProjetoResposta(
+        p.getId(),
         p.getTitulo(),
         p.getDescricao(),
         p.getOrcamento(),
-        p.getHorasEstimadas(),
         p.getStatus().name(),
         servicos,
         p.getUsuarioId().getId(),
         p.getScoreRisco(),
-        p.getCriadoEm()
-        ));
+        p.getCriadoEm(),
+        dias,
+        null
+));
     }
     return resultado;
 }

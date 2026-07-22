@@ -1,32 +1,29 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.main.servicoFinal.model;
 
-/**
- *
- * @author Mateus
- */
+import java.util.List;
+import java.util.Set;
+
 public class UserPerfil {
-    
+
     private String nome;
+    private String descricao;
     private String email;
     private String telefone;
     private Double reputacao;
-    private Integer horasSemana;
     private Long id;
+    private List<String> diasTrabalho;
 
     public UserPerfil() {
     }
 
-    public UserPerfil(String nome, String email, String telefone, Double reputacao, Integer horasSemana, Long id) {
+    public UserPerfil(String nome, String descricao, String email, String telefone, Double reputacao, Long id, List<String> diasTrabalho) {
         this.nome = nome;
+        this.descricao = descricao;
         this.email = email;
         this.telefone = telefone;
         this.reputacao = reputacao;
-        this.horasSemana = horasSemana;
         this.id = id;
+        this.diasTrabalho = diasTrabalho;
     }
 
     
@@ -63,14 +60,6 @@ public class UserPerfil {
         this.reputacao = reputacao;
     }
 
-    public Integer getHorasSemana() {
-        return horasSemana;
-    }
-
-    public void setHorasSemana(Integer horasSemana) {
-        this.horasSemana = horasSemana;
-    }
-
     public Long getId() {
         return id;
     }
@@ -79,6 +68,21 @@ public class UserPerfil {
         this.id = id;
     }
 
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
+
+    public List<String> getDiasTrabalho() {
+        return diasTrabalho;
+    }
+
+    public void setDiasTrabalho(List<String> diasTrabalho) {
+        this.diasTrabalho = diasTrabalho;
+    }
+
     
-   
 }

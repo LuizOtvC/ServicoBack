@@ -5,7 +5,9 @@
 package com.main.servicoFinal.model;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -19,7 +21,9 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -41,8 +45,6 @@ public class ProjetoDto {
     private String descricao;
     @Column (nullable = false)
     private Double orcamento;
-    @Column (nullable = false, name = "horas_estimadas")
-    private Integer horasEstimadas;
     
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -54,6 +56,15 @@ public class ProjetoDto {
     @Column(nullable = false, name = "criado_em")
     private LocalDateTime criadoEm;
     
+    @ElementCollection(fetch = FetchType.EAGER)
+@CollectionTable(
+    name = "projeto_dia_trabalho",
+    joinColumns = @JoinColumn(name = "projeto_id")
+)
+@Enumerated(EnumType.STRING)
+@Column(name = "dia_semana")
+private Set<DiaSemana> diasTrabalho = new HashSet<>();
+    
     
 
 
@@ -61,21 +72,34 @@ public class ProjetoDto {
     public enum Status {
         ABERTO, EM_ANDAMENTO, CONCLUIDO, CANCELADO
     }
+    
+    public enum DiaSemana {
+    DOMINGO,
+    SEGUNDA,
+    TERCA,
+    QUARTA,
+    QUINTA,
+    SEXTA,
+    SABADO
+}
 
     public ProjetoDto() {
     }
 
-    public ProjetoDto(Long id, User usuarioId, String titulo, String descricao, Double orcamento, Integer horasEstimadas, Status status, Integer scoreRisco, LocalDateTime criadoEm) {
+    public ProjetoDto(Long id, User usuarioId, String titulo, String descricao, Double orcamento, Status status, Integer scoreRisco, LocalDateTime criadoEm) {
         this.id = id;
         this.usuarioId = usuarioId;
         this.titulo = titulo;
         this.descricao = descricao;
         this.orcamento = orcamento;
-        this.horasEstimadas = horasEstimadas;
         this.status = status;
         this.scoreRisco = scoreRisco;
         this.criadoEm = criadoEm;
     }
+
+    
+
+    
 
     public Long getId() {
         return id;
@@ -117,13 +141,7 @@ public class ProjetoDto {
         this.orcamento = orcamento;
     }
 
-    public Integer getHorasEstimadas() {
-        return horasEstimadas;
-    }
-
-    public void setHorasEstimadas(Integer horasEstimadas) {
-        this.horasEstimadas = horasEstimadas;
-    }
+    
 
     public Status getStatus() {
         return status;
@@ -149,6 +167,15 @@ public class ProjetoDto {
         this.criadoEm = criadoEm;
     }
 
+    public Set<DiaSemana> getDiasTrabalho() {
+        return diasTrabalho;
+    }
+
+    public void setDiasTrabalho(Set<DiaSemana> diasTrabalho) {
+        this.diasTrabalho = diasTrabalho;
+    }
+
+    
     
     
     

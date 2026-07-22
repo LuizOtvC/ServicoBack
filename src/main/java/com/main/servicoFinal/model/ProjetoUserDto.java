@@ -5,6 +5,7 @@
 package com.main.servicoFinal.model;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -15,9 +16,9 @@ public class ProjetoUserDto {
     private String titulo;
     private String descricao;
     private Double orcamento;
-    private Integer horasEstimadas;
     private ProjetoDto.Status status;
     private List<Long> servicosId;
+    private Set<ProjetoDto.DiaSemana> diasTrabalho;
 
     public String getTitulo() { return titulo; }
     public void setTitulo(String titulo) { this.titulo = titulo; }
@@ -28,9 +29,6 @@ public class ProjetoUserDto {
     public Double getOrcamento() { return orcamento; }
     public void setOrcamento(Double orcamento) { this.orcamento = orcamento; }
 
-    public Integer getHorasEstimadas() { return horasEstimadas; }
-    public void setHorasEstimadas(Integer horasEstimadas) { this.horasEstimadas = horasEstimadas; }
-
     public List<Long> getServicosId() { return servicosId; }
     public void setServicosId(List<Long> servicosId) { this.servicosId = servicosId; }
 
@@ -40,6 +38,14 @@ public class ProjetoUserDto {
 
     public void setStatus(ProjetoDto.Status status) {
         this.status = status;
+    }
+
+    public Set<ProjetoDto.DiaSemana> getDiasTrabalho() {
+        return diasTrabalho;
+    }
+
+    public void setDiasTrabalho(Set<ProjetoDto.DiaSemana> diasTrabalho) {
+        this.diasTrabalho = diasTrabalho;
     }
     
     

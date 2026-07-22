@@ -49,6 +49,8 @@ public class PropostaDto {
 
     @Column(nullable = false, name = "enviado_em")
     private LocalDateTime enviadoEm;
+    
+    
 
     public enum Status {
         PENDENTE, ACEITA, RECUSADA, CANCELADA

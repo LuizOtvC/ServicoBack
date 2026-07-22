@@ -9,27 +9,29 @@ public class ProjetoResposta {
     private String titulo;
     private String descricao;
     private Double orcamento;
-    private Integer horasEstimadas;
     private String status;
     private List<String> servicos;
     private Long usuarioId;
     private Integer scoreRisco;
     private LocalDateTime criadoEm;
+    private List<String> diasTrabalho;
+    private PropostaRespostaDto propostaAceita;
 
     public ProjetoResposta() {
     }
 
-    public ProjetoResposta(Long id, String titulo, String descricao, Double orcamento, Integer horasEstimadas, String status, List<String> servicos, Long usuarioId, Integer scoreRisco, LocalDateTime criadoEm) {
+    public ProjetoResposta(Long id, String titulo, String descricao, Double orcamento, String status, List<String> servicos, Long usuarioId, Integer scoreRisco, LocalDateTime criadoEm, List<String> diasTrabalho, PropostaRespostaDto propostaAceita) {
         this.id = id;
         this.titulo = titulo;
         this.descricao = descricao;
         this.orcamento = orcamento;
-        this.horasEstimadas = horasEstimadas;
         this.status = status;
         this.servicos = servicos;
         this.usuarioId = usuarioId;
         this.scoreRisco = scoreRisco;
         this.criadoEm = criadoEm;
+        this.diasTrabalho = diasTrabalho;
+        this.propostaAceita = propostaAceita;
     }
 
     public Long getId() {
@@ -62,14 +64,6 @@ public class ProjetoResposta {
 
     public void setOrcamento(Double orcamento) {
         this.orcamento = orcamento;
-    }
-
-    public Integer getHorasEstimadas() {
-        return horasEstimadas;
-    }
-
-    public void setHorasEstimadas(Integer horasEstimadas) {
-        this.horasEstimadas = horasEstimadas;
     }
 
     public String getStatus() {
@@ -111,15 +105,29 @@ public class ProjetoResposta {
     public void setCriadoEm(LocalDateTime criadoEm) {
         this.criadoEm = criadoEm;
     }
-    
-    private PropostaRespostaDto propostaAceita;
 
-public PropostaRespostaDto getPropostaAceita() {
-    return propostaAceita;
-}
-public void setPropostaAceita(PropostaRespostaDto propostaAceita) {
-    this.propostaAceita = propostaAceita;
-}
+    public List<String> getDiasTrabalho() {
+        return diasTrabalho;
+    }
+
+    public void setDiasTrabalho(List<String> diasTrabalho) {
+        this.diasTrabalho = diasTrabalho;
+    }
+
+    public PropostaRespostaDto getPropostaAceita() {
+        return propostaAceita;
+    }
+
+    public void setPropostaAceita(PropostaRespostaDto propostaAceita) {
+        this.propostaAceita = propostaAceita;
+    }
+
+    
+    
+
+
+
+
     
 
     
