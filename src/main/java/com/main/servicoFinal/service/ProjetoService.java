@@ -81,38 +81,29 @@ public class ProjetoService {
         return projetoRepository.findAll();
     }
 
-    public List<ProjetoResposta> listarProjetosFiltro(Long id) {
-    List<ProjetoDto> projetos = projetoRepository.findByStatusAndUsuarioIdIdNot(ProjetoDto.Status.ABERTO, id);
-    List<ProjetoResposta> resultado = new ArrayList<>();
+    public List<ProjetoResposta> listarProjetosComFiltro(
+        Long usuarioId,
+        Double orcamentoMin,
+        List<Long> servicosIds,
+        List<ProjetoDto.DiaSemana> diasSemana) {
 
+    List<ProjetoDto> projetos = projetoRepository.findComFiltros(
+        usuarioId, orcamentoMin, servicosIds, diasSemana);
+
+    List<ProjetoResposta> resultado = new ArrayList<>();
     for (ProjetoDto p : projetos) {
         List<String> servicos = new ArrayList<>();
         List<ProjetoServicoDto> ps = projetoServicoRepository.findByProjetoId(p.getId());
-
         for (ProjetoServicoDto s : ps) {
             servicos.add(s.getServico().getNome());
         }
-
-        List<String> dias = p.getDiasTrabalho()
-        .stream()
-        .map(Enum::name)
-        .toList();
-
-resultado.add(new ProjetoResposta(
-        p.getId(),
-        p.getTitulo(),
-        p.getDescricao(),
-        p.getOrcamento(),
-        p.getStatus().name(),
-        servicos,
-        p.getUsuarioId().getId(),
-        p.getScoreRisco(),
-        p.getCriadoEm(),
-        dias,
-        null
-));
+        List<String> dias = p.getDiasTrabalho().stream().map(Enum::name).toList();
+        resultado.add(new ProjetoResposta(
+            p.getId(), p.getTitulo(), p.getDescricao(), p.getOrcamento(),
+            p.getStatus().name(), servicos, p.getUsuarioId().getId(),
+            p.getScoreRisco(), p.getCriadoEm(), dias, null
+        ));
     }
-
     return resultado;
 }
     

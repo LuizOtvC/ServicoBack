@@ -51,10 +51,16 @@ public List<ProjetoDto> listarProjeto(@RequestHeader("Authorization") String aut
     return service.listarProjetos();
 }
 @GetMapping("/listarFiltro")
-public List<ProjetoResposta> listarProjetosFiltro(@RequestHeader("Authorization") String auth) {
+public List<ProjetoResposta> listarComFiltro(@RequestHeader("Authorization") String auth, @RequestParam(required = false) Double orcamentoMin, @RequestParam(required = false) List<Long> servicosIds, @RequestParam(required = false) List<String> diasSemana) {
     String token = auth.replace("Bearer ", "");
     User usertoken = tokens.extrairClaims(token);
-    return service.listarProjetosFiltro(usertoken.getId());
+
+    List<ProjetoDto.DiaSemana> dias = diasSemana != null
+        ? diasSemana.stream().map(ProjetoDto.DiaSemana::valueOf).toList()
+        : null;
+
+    return service.listarProjetosComFiltro(
+        usertoken.getId(), orcamentoMin, servicosIds, dias);
 }
 @GetMapping("/listarId/{id}")
 public ProjetoResposta listarProjetoId(@RequestHeader("Authorization") String auth, @PathVariable Long id) {
