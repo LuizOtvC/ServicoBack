@@ -118,6 +118,14 @@ public class PropostaService {
     mensagemService.PropostaCancelada(proposta);
 }
      
+     public void concluirProposta(Long id) {
+    PropostaDto proposta = propostaRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Proposta não encontrada"));
+    proposta.setStatus(PropostaDto.Status.CANCELADA);
+    propostaRepository.save(proposta);
+    mensagemService.PropostaCancelada(proposta);
+}
+     
      public void RecusarProposta(Long id) {
     PropostaDto proposta = propostaRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("Proposta não encontrada"));

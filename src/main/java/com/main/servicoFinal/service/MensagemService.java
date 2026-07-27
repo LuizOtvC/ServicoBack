@@ -66,6 +66,16 @@ public class MensagemService {
     mensagemRepository.save(mensagem);
 }
     
+    public void PropostaConcluida(PropostaDto proposta) {
+    MensagemDto mensagem = new MensagemDto();
+    mensagem.setUsuarioId(proposta.getUsuario());
+    mensagem.setProjetoId(proposta.getProjeto());
+    mensagem.setMensagem("Sua proposta foi concluida");
+    mensagem.setStatus(MensagemDto.Status.CONCLUIDO);
+    mensagem.setEnviadoEm(LocalDateTime.now());
+    mensagemRepository.save(mensagem);
+}
+    
     public void ProjetoEmAndamento(ProjetoDto projeto) {
     MensagemDto mensagem = new MensagemDto();
     mensagem.setUsuarioId(projeto.getUsuarioId());
@@ -114,7 +124,7 @@ public class MensagemService {
     if(proposta.getStatus() == PropostaDto.Status.ACEITA){
     mensagem.setUsuarioId(proposta.getUsuario());
     mensagem.setProjetoId(proposta.getProjeto());
-    mensagem.setMensagem("Projeto esta concluido");
+    mensagem.setMensagem("Projeto foi concluido");
     mensagem.setStatus(MensagemDto.Status.CONCLUIDO);
     mensagem.setEnviadoEm(LocalDateTime.now());
     mensagemRepository.save(mensagem); 

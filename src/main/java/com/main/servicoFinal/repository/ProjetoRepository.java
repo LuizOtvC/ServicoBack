@@ -37,5 +37,6 @@ List<ProjetoDto> findComFiltros(
     @Param("servicosIds") List<Long> servicosIds,
     @Param("diasSemana") List<ProjetoDto.DiaSemana> diasSemana
 );
+ long countByUsuarioIdIdAndStatusIn(Long usuarioId, List<ProjetoDto.Status> status);
     
 }

@@ -56,6 +56,13 @@ public class ProjetoService {
     private PropostaService propostaService;
     
     public void criarProjeto(Long usuarioId, ProjetoUserDto dados) {
+        long quantidade = projetoRepository.countByUsuarioIdIdAndStatusIn(usuarioId,List.of(ProjetoDto.Status.ABERTO,ProjetoDto.Status.EM_ANDAMENTO));
+
+    if (quantidade >= 3) {
+        throw new RuntimeException(
+                "Você já possui 3 projetos em aberto ou em andamento."
+        );
+    }
     ProjetoDto projeto = new ProjetoDto();
     projeto.setUsuarioId(user.getReferenceById(usuarioId));
     projeto.setTitulo(dados.getTitulo());
@@ -198,16 +205,20 @@ resultado.add(new ProjetoResposta(
     .orElseThrow(() -> new RuntimeException("Nenhuma proposta aceita encontrada"));
     mensagemService.ProjetoEmAndamentoProposta(proposta);
 }
-   public void projetoConcluido(Long id, String token) {
+  public void projetoConcluido(Long id, String token) {
     ProjetoDto projeto = projetoRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("Projeto não encontrado"));
 
     projeto.setStatus(ProjetoDto.Status.CONCLUIDO);
     projetoRepository.save(projeto);
+
     mensagemService.ProjetoConcluido(projeto);
 
     propostaRepository.findByProjetoAndStatus(projeto, PropostaDto.Status.ACEITA)
-        .ifPresent(proposta -> mensagemService.ProjetoConcluidoProposta(proposta));
+        .ifPresent(proposta -> {
+            propostaService.concluirProposta(proposta.getId());
+            mensagemService.ProjetoConcluidoProposta(proposta);
+        });
 }
    
    public void projetoCancelado(Long id) {

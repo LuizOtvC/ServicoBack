@@ -24,9 +24,8 @@ Optional<PropostaDto> findByProjetoAndStatus(ProjetoDto projeto,PropostaDto.Stat
 boolean existsByUsuarioIdAndProjetoId(Long usuarioId, Long projetoId);
 List<PropostaDto> findByProjeto(ProjetoDto projeto);
  long countByUsuarioIdAndStatus(Long usuarioId, PropostaDto.Status status);
-
     public List<PropostaDto> findByProjetoId(Long projeto);
-
     public boolean existsByProjetoIdAndStatus(Long id, PropostaDto.Status status);
+    Optional<PropostaDto> findByProjetoIdAndStatus(Long projetoId, PropostaDto.Status status);
     
 }
