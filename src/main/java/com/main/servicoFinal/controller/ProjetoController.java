@@ -55,9 +55,7 @@ public List<ProjetoResposta> listarComFiltro(@RequestHeader("Authorization") Str
     String token = auth.replace("Bearer ", "");
     User usertoken = tokens.extrairClaims(token);
 
-    List<ProjetoDto.DiaSemana> dias = diasSemana != null
-        ? diasSemana.stream().map(ProjetoDto.DiaSemana::valueOf).toList()
-        : null;
+    List<ProjetoDto.DiaSemana> dias = diasSemana != null ? diasSemana.stream().map(ProjetoDto.DiaSemana::valueOf).toList() : null;
 
     return service.listarProjetosComFiltro(
         usertoken.getId(), orcamentoMin, servicosIds, dias);

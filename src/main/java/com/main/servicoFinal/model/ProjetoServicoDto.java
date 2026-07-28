@@ -19,23 +19,26 @@ public class ProjetoServicoDto {
     @JoinColumn(name = "servico_id")
     private ServicoDto servico;
 
-    public ProjetoServicoIdDto getId() {  
-        return id; 
-    }
-    public void setId(ProjetoServicoIdDto id) { 
-        this.id = id; 
+    public ProjetoServicoIdDto getId() {
+        return id;
     }
 
-    public ProjetoDto getProjeto() { 
-        return projeto; 
-    }
-    public void setProjeto(ProjetoDto projeto) { 
-        this.projeto = projeto; 
+    public void setId(ProjetoServicoIdDto id) {
+        this.id = id;
     }
 
-    public ServicoDto getServico() { 
-        return servico; 
+    public ProjetoDto getProjeto() {
+        return projeto;
     }
+
+    public void setProjeto(ProjetoDto projeto) {
+        this.projeto = projeto;
+    }
+
+    public ServicoDto getServico() {
+        return servico;
+    }
+
     public void setServico(ServicoDto servico) {
         this.servico = servico;
     }

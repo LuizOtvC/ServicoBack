@@ -32,56 +32,52 @@ import java.util.Set;
 @Entity
 @Table(name = "projeto")
 public class ProjetoDto {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)
     private User usuarioId;
-    @Column (nullable = false, length = 200)
+    @Column(nullable = false, length = 200)
     private String titulo;
-    @Column (nullable = false)
+    @Column(nullable = false)
     private String descricao;
-    @Column (nullable = false)
+    @Column(nullable = false)
     private Double orcamento;
-    
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Status status;
-    
+
     @Column(nullable = false, name = "score_risco")
     private Integer scoreRisco;
-    
+
     @Column(nullable = false, name = "criado_em")
     private LocalDateTime criadoEm;
-    
+
     @ElementCollection(fetch = FetchType.EAGER)
-@CollectionTable(
-    name = "projeto_dia_trabalho",
-    joinColumns = @JoinColumn(name = "projeto_id")
-)
-@Enumerated(EnumType.STRING)
-@Column(name = "dia_semana")
-private Set<DiaSemana> diasTrabalho = new HashSet<>();
-    
-    
-
-
+    @CollectionTable(
+            name = "projeto_dia_trabalho",
+            joinColumns = @JoinColumn(name = "projeto_id")
+    )
+    @Enumerated(EnumType.STRING)
+    @Column(name = "dia_semana")
+    private Set<DiaSemana> diasTrabalho = new HashSet<>();
 
     public enum Status {
         ABERTO, EM_ANDAMENTO, CONCLUIDO, CANCELADO
     }
-    
+
     public enum DiaSemana {
-    DOMINGO,
-    SEGUNDA,
-    TERCA,
-    QUARTA,
-    QUINTA,
-    SEXTA,
-    SABADO
-}
+        DOMINGO,
+        SEGUNDA,
+        TERCA,
+        QUARTA,
+        QUINTA,
+        SEXTA,
+        SABADO
+    }
 
     public ProjetoDto() {
     }
@@ -96,10 +92,6 @@ private Set<DiaSemana> diasTrabalho = new HashSet<>();
         this.scoreRisco = scoreRisco;
         this.criadoEm = criadoEm;
     }
-
-    
-
-    
 
     public Long getId() {
         return id;
@@ -141,8 +133,6 @@ private Set<DiaSemana> diasTrabalho = new HashSet<>();
         this.orcamento = orcamento;
     }
 
-    
-
     public Status getStatus() {
         return status;
     }
@@ -175,8 +165,4 @@ private Set<DiaSemana> diasTrabalho = new HashSet<>();
         this.diasTrabalho = diasTrabalho;
     }
 
-    
-    
-    
-    
 }

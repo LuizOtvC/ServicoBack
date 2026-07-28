@@ -122,13 +122,4 @@ public class ProjetoResposta {
         this.propostaAceita = propostaAceita;
     }
 
-    
-    
-
-
-
-
-    
-
-    
 }

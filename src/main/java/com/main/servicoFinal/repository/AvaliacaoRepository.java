@@ -13,6 +13,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author Aluno
  */
 public interface AvaliacaoRepository extends JpaRepository<AvaliacaoDto, Long> {
+
     boolean existsByProjetoIdAndAvaliadorId(Long projetoId, Long avaliadorId);
+
     List<AvaliacaoDto> findByAvaliadoId(Long avaliadoId);
 }

@@ -9,6 +9,7 @@ package com.main.servicoFinal.model;
  * @author Mateus
  */
 public class ServicoListar {
+
     private Long ServicoId;
     private String nomeServico;
     private String nivel;
@@ -30,8 +31,6 @@ public class ServicoListar {
         this.ServicoId = ServicoId;
     }
 
-    
-
     public String getNomeServico() {
         return nomeServico;
     }
@@ -48,5 +47,4 @@ public class ServicoListar {
         this.nivel = nivel;
     }
 
-    
 }

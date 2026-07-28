@@ -9,6 +9,7 @@ package com.main.servicoFinal.model;
  * @author Mateus
  */
 public class ServicoAtualizar {
+
     private Long idAntigo;
     private Long idNovo;
     private UsuarioServicoDto.Nivel nivel;
@@ -30,8 +31,6 @@ public class ServicoAtualizar {
         this.idAntigo = idAntigo;
     }
 
-    
-
     public Long getIdNovo() {
         return idNovo;
     }
@@ -48,7 +47,4 @@ public class ServicoAtualizar {
         this.nivel = nivel;
     }
 
-    
-    
-    
 }

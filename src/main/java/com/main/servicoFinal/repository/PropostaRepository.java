@@ -16,16 +16,26 @@ import org.springframework.stereotype.Repository;
  * @author Mateus
  */
 @Repository
-public interface PropostaRepository extends JpaRepository<PropostaDto, Long>{
-List<PropostaDto> findByProjetoUsuarioIdIdAndStatus(Long usuarioId, PropostaDto.Status status);
-List<PropostaDto> findByUsuarioId(Long usuarioId);
-Optional<PropostaDto> findByProjeto_IdAndStatus(Long id, PropostaDto.Status status);
-Optional<PropostaDto> findByProjetoAndStatus(ProjetoDto projeto,PropostaDto.Status status);
-boolean existsByUsuarioIdAndProjetoId(Long usuarioId, Long projetoId);
-List<PropostaDto> findByProjeto(ProjetoDto projeto);
- long countByUsuarioIdAndStatus(Long usuarioId, PropostaDto.Status status);
+public interface PropostaRepository extends JpaRepository<PropostaDto, Long> {
+
+    List<PropostaDto> findByProjetoUsuarioIdIdAndStatus(Long usuarioId, PropostaDto.Status status);
+
+    List<PropostaDto> findByUsuarioId(Long usuarioId);
+
+    Optional<PropostaDto> findByProjeto_IdAndStatus(Long id, PropostaDto.Status status);
+
+    Optional<PropostaDto> findByProjetoAndStatus(ProjetoDto projeto, PropostaDto.Status status);
+
+    boolean existsByUsuarioIdAndProjetoId(Long usuarioId, Long projetoId);
+
+    List<PropostaDto> findByProjeto(ProjetoDto projeto);
+
+    long countByUsuarioIdAndStatus(Long usuarioId, PropostaDto.Status status);
+
     public List<PropostaDto> findByProjetoId(Long projeto);
+
     public boolean existsByProjetoIdAndStatus(Long id, PropostaDto.Status status);
+
     Optional<PropostaDto> findByProjetoIdAndStatus(Long projetoId, PropostaDto.Status status);
-    
+
 }

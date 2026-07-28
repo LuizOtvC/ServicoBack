@@ -29,7 +29,6 @@ public class User {
     @Column(nullable = false)
     private Double reputacao = 5.0;
 
-
     @Column(name = "peso_servicos")
     private Double pesoServicos;
 
@@ -46,13 +45,13 @@ public class User {
     private String descricao;
 
     @ElementCollection(fetch = FetchType.EAGER)
-@CollectionTable(
-        name = "usuario_dia_trabalho",
-        joinColumns = @JoinColumn(name = "usuario_id")
-)
-@Enumerated(EnumType.STRING)
-@Column(name = "dia_semana")
-private Set<DiaSemana> diasTrabalho = new HashSet<>();
+    @CollectionTable(
+            name = "usuario_dia_trabalho",
+            joinColumns = @JoinColumn(name = "usuario_id")
+    )
+    @Enumerated(EnumType.STRING)
+    @Column(name = "dia_semana")
+    private Set<DiaSemana> diasTrabalho = new HashSet<>();
 
     public enum DiaSemana {
         DOMINGO, SEGUNDA, TERCA, QUARTA, QUINTA, SEXTA, SABADO
@@ -157,7 +156,4 @@ private Set<DiaSemana> diasTrabalho = new HashSet<>();
         this.diasTrabalho = diasTrabalho;
     }
 
-    
-
-    
 }

@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
  * @author Mateus
  */
 public class MensagemRespostaDto {
-    
+
     private Long id;
     private String nomeProjeto;
     private Long projetoId;
@@ -20,7 +20,7 @@ public class MensagemRespostaDto {
     private LocalDateTime enviadoEm;
 
     public MensagemRespostaDto(Long id, String nomeProjeto, Long projetoId, String mensagem,
-                                String status, LocalDateTime enviadoEm) {
+            String status, LocalDateTime enviadoEm) {
         this.id = id;
         this.nomeProjeto = nomeProjeto;
         this.projetoId = projetoId;
@@ -29,10 +29,27 @@ public class MensagemRespostaDto {
         this.enviadoEm = enviadoEm;
     }
 
-    public Long getId() { return id; }
-    public String getNomeProjeto() { return nomeProjeto; }
-    public Long getProjetoId() { return projetoId; }
-    public String getMensagem() { return mensagem; }
-    public String getStatus() { return status; }
-    public LocalDateTime getEnviadoEm() { return enviadoEm; }
+    public Long getId() {
+        return id;
+    }
+
+    public String getNomeProjeto() {
+        return nomeProjeto;
+    }
+
+    public Long getProjetoId() {
+        return projetoId;
+    }
+
+    public String getMensagem() {
+        return mensagem;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public LocalDateTime getEnviadoEm() {
+        return enviadoEm;
+    }
 }

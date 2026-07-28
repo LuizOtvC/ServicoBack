@@ -13,9 +13,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
  *
  * @author Mateus
  */
-public interface ProjetoServicoRepository extends JpaRepository<ProjetoServicoDto, ProjetoServicoIdDto>{
+public interface ProjetoServicoRepository extends JpaRepository<ProjetoServicoDto, ProjetoServicoIdDto> {
 
     List<ProjetoServicoDto> findByProjetoId(Long projetoId);
-    
-    
+
 }

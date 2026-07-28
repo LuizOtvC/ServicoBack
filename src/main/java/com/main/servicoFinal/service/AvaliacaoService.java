@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class AvaliacaoService {
-    
+
     @Autowired
     private AvaliacaoRepository avaliacaoRepository;
     @Autowired
@@ -38,15 +38,15 @@ public class AvaliacaoService {
         }
 
         ProjetoDto projeto = projetoRepository.findById(projetoId)
-            .orElseThrow(() -> new RuntimeException("Projeto não encontrado"));
+                .orElseThrow(() -> new RuntimeException("Projeto não encontrado"));
 
         if (projeto.getStatus() != ProjetoDto.Status.CONCLUIDO) {
             throw new RuntimeException("Só é possível avaliar projetos concluídos.");
         }
 
         PropostaDto propostaAceita = propostaRepository
-            .findByProjetoIdAndStatus(projetoId, PropostaDto.Status.ACEITA)
-            .orElseThrow(() -> new RuntimeException("Nenhum profissional selecionado para este projeto."));
+                .findByProjetoIdAndStatus(projetoId, PropostaDto.Status.ACEITA)
+                .orElseThrow(() -> new RuntimeException("Nenhum profissional selecionado para este projeto."));
 
         Long donoId = projeto.getUsuarioId().getId();
         Long profissionalId = propostaAceita.getUsuario().getId();
@@ -82,13 +82,12 @@ public class AvaliacaoService {
     private void atualizarReputacao(Long usuarioId) {
         List<AvaliacaoDto> avaliacoes = avaliacaoRepository.findByAvaliadoId(usuarioId);
         double media = avaliacoes.stream()
-            .mapToDouble(AvaliacaoDto::getNota)
-            .average()
-            .orElse(5.0);
+                .mapToDouble(AvaliacaoDto::getNota)
+                .average()
+                .orElse(5.0);
 
         User user = userRepository.getReferenceById(usuarioId);
         user.setReputacao(media);
         userRepository.save(user);
     }
 }
-    

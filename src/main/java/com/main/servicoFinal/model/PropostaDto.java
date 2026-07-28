@@ -24,7 +24,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "proposta")
 public class PropostaDto {
-   
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -39,7 +39,7 @@ public class PropostaDto {
 
     @Column(nullable = false, name = "valor_proposto")
     private Double valorProposto;
-    
+
     @Column(nullable = false)
     private String descricao;
 
@@ -49,8 +49,6 @@ public class PropostaDto {
 
     @Column(nullable = false, name = "enviado_em")
     private LocalDateTime enviadoEm;
-    
-    
 
     public enum Status {
         PENDENTE, ACEITA, RECUSADA, CANCELADA, CONCLUIDA
@@ -112,6 +110,4 @@ public class PropostaDto {
         this.descricao = descricao;
     }
 
-    
-    
 }

@@ -9,7 +9,7 @@ package com.main.servicoFinal.model;
  * @author Mateus
  */
 public class UserRegistro {
-    
+
     private String nome;
     private String email;
     private String senha;
@@ -56,7 +56,5 @@ public class UserRegistro {
     public void setTelefone(String telefone) {
         this.telefone = telefone;
     }
-    
-    
-    
+
 }

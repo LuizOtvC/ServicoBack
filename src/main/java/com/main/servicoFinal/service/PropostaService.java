@@ -24,7 +24,7 @@ import org.springframework.web.server.ResponseStatusException;
  */
 @Service
 public class PropostaService {
-    
+
     @Autowired
     private PropostaRepository propostaRepository;
 
@@ -33,17 +33,17 @@ public class PropostaService {
 
     @Autowired
     private ProjetoRepository projetoRepository;
-    
+
     @Autowired
     private MensagemService mensagemService;
-    
+
     @Autowired
     private MatchService matchService;
 
     public void criarProposta(Long usuarioId, Long projetoId, Double valorProposto, String descricao) {
         if (propostaRepository.existsByUsuarioIdAndProjetoId(usuarioId, projetoId)) {
-        throw new IllegalStateException("Você já enviou uma proposta para este projeto.");
-    }
+            throw new IllegalStateException("Você já enviou uma proposta para este projeto.");
+        }
         PropostaDto proposta = new PropostaDto();
         proposta.setUsuario(userRepository.getReferenceById(usuarioId));
         proposta.setProjeto(projetoRepository.getReferenceById(projetoId));
@@ -56,85 +56,86 @@ public class PropostaService {
         mensagemService.PropostaEnviada(proposta);
         mensagemService.novaProposta(proposta);
     }
-    
+
     public List<PropostaRespostaDto> listarPropostasPendentes(Long usuarioId) {
-    List<PropostaDto> propostas = propostaRepository.findByProjetoUsuarioIdIdAndStatus(usuarioId, PropostaDto.Status.PENDENTE);
-    List<PropostaRespostaDto> resultado = new ArrayList<>();
-    for (PropostaDto p : propostas) {
-        resultado.add(new PropostaRespostaDto(
-            p.getId(),
-            p.getProjeto().getId(),
-            p.getProjeto().getTitulo(),
-            p.getUsuario().getId(),
-            p.getUsuario().getNome(),
-            p.getValorProposto(),
-            p.getDescricao(),
-            p.getStatus().name(),
-            p.getEnviadoEm()
-        ));
+        List<PropostaDto> propostas = propostaRepository.findByProjetoUsuarioIdIdAndStatus(usuarioId, PropostaDto.Status.PENDENTE);
+        List<PropostaRespostaDto> resultado = new ArrayList<>();
+        for (PropostaDto p : propostas) {
+            resultado.add(new PropostaRespostaDto(
+                    p.getId(),
+                    p.getProjeto().getId(),
+                    p.getProjeto().getTitulo(),
+                    p.getUsuario().getId(),
+                    p.getUsuario().getNome(),
+                    p.getValorProposto(),
+                    p.getDescricao(),
+                    p.getStatus().name(),
+                    p.getEnviadoEm()
+            ));
+        }
+        return resultado;
     }
-    return resultado;
-}
-    
+
     public void aceitarProposta(Long id) {
-    PropostaDto proposta = propostaRepository.findById(id)
-        .orElseThrow(() -> new RuntimeException("Proposta não encontrada"));
-    boolean jaTemCandidato = propostaRepository
-        .existsByProjetoIdAndStatus(proposta.getProjeto().getId(), PropostaDto.Status.ACEITA);
+        PropostaDto proposta = propostaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Proposta não encontrada"));
+        boolean jaTemCandidato = propostaRepository
+                .existsByProjetoIdAndStatus(proposta.getProjeto().getId(), PropostaDto.Status.ACEITA);
 
-    if (jaTemCandidato) {
-        throw new ResponseStatusException(HttpStatus.CONFLICT, "Este projeto já possui um candidato aceito");
+        if (jaTemCandidato) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Este projeto já possui um candidato aceito");
+        }
+
+        proposta.setStatus(PropostaDto.Status.ACEITA);
+        propostaRepository.save(proposta);
+        mensagemService.PropostaAceita(proposta);
     }
 
-    proposta.setStatus(PropostaDto.Status.ACEITA);
-    propostaRepository.save(proposta);
-    mensagemService.PropostaAceita(proposta);
-}
-    
     public List<PropostaRespostaDto> listarPropostasUsuario(Long usuarioId) {
-    List<PropostaDto> propostas = propostaRepository.findByUsuarioId(usuarioId);
-    List<PropostaRespostaDto> resultado = new ArrayList<>();
-    for (PropostaDto p : propostas) {
-        resultado.add(new PropostaRespostaDto(
-            p.getId(),
-            p.getProjeto().getId(),
-            p.getProjeto().getTitulo(),
-            p.getUsuario().getId(),
-            p.getUsuario().getNome(),
-            p.getValorProposto(),
-            p.getDescricao(),
-            p.getStatus().name(),
-            p.getEnviadoEm()
-        ));
+        List<PropostaDto> propostas = propostaRepository.findByUsuarioId(usuarioId);
+        List<PropostaRespostaDto> resultado = new ArrayList<>();
+        for (PropostaDto p : propostas) {
+            resultado.add(new PropostaRespostaDto(
+                    p.getId(),
+                    p.getProjeto().getId(),
+                    p.getProjeto().getTitulo(),
+                    p.getUsuario().getId(),
+                    p.getUsuario().getNome(),
+                    p.getValorProposto(),
+                    p.getDescricao(),
+                    p.getStatus().name(),
+                    p.getEnviadoEm()
+            ));
+        }
+        return resultado;
     }
-    return resultado;
-}
-    
-     public void cancelarProposta(Long id) {
-    PropostaDto proposta = propostaRepository.findById(id)
-        .orElseThrow(() -> new RuntimeException("Proposta não encontrada"));
-    proposta.setStatus(PropostaDto.Status.CANCELADA);
-    propostaRepository.save(proposta);
-    mensagemService.PropostaCancelada(proposta);
-}
-     
-     public void concluirProposta(Long id) {
-    PropostaDto proposta = propostaRepository.findById(id)
-        .orElseThrow(() -> new RuntimeException("Proposta não encontrada"));
-    proposta.setStatus(PropostaDto.Status.CONCLUIDA);
-    propostaRepository.save(proposta);
-    mensagemService.PropostaConcluida(proposta);
-}
-     
-     public void RecusarProposta(Long id) {
-    PropostaDto proposta = propostaRepository.findById(id)
-        .orElseThrow(() -> new RuntimeException("Proposta não encontrada"));
-    proposta.setStatus(PropostaDto.Status.RECUSADA);
-    propostaRepository.save(proposta);
-    mensagemService.PropostaRecusada(proposta);
-}
-     public boolean existeProposta(Long usuarioId, Long projetoId) {
-    return propostaRepository.existsByUsuarioIdAndProjetoId(usuarioId, projetoId);
-}
-    
+
+    public void cancelarProposta(Long id) {
+        PropostaDto proposta = propostaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Proposta não encontrada"));
+        proposta.setStatus(PropostaDto.Status.CANCELADA);
+        propostaRepository.save(proposta);
+        mensagemService.PropostaCancelada(proposta);
+    }
+
+    public void concluirProposta(Long id) {
+        PropostaDto proposta = propostaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Proposta não encontrada"));
+        proposta.setStatus(PropostaDto.Status.CONCLUIDA);
+        propostaRepository.save(proposta);
+        mensagemService.PropostaConcluida(proposta);
+    }
+
+    public void RecusarProposta(Long id) {
+        PropostaDto proposta = propostaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Proposta não encontrada"));
+        proposta.setStatus(PropostaDto.Status.RECUSADA);
+        propostaRepository.save(proposta);
+        mensagemService.PropostaRecusada(proposta);
+    }
+
+    public boolean existeProposta(Long usuarioId, Long projetoId) {
+        return propostaRepository.existsByUsuarioIdAndProjetoId(usuarioId, projetoId);
+    }
+
 }

@@ -55,27 +55,26 @@ public class MatchService {
 
         User usuario = userRepository.getReferenceById(usuarioId);
         ProjetoDto projeto = projetoRepository.getReferenceById(projetoId);
-        
-        Set<ProjetoDto.DiaSemana> diasProjeto = projeto.getDiasTrabalho();
-Set<DiaSemana> diasUsuario = usuario.getDiasTrabalho();
 
-        
+        Set<ProjetoDto.DiaSemana> diasProjeto = projeto.getDiasTrabalho();
+        Set<DiaSemana> diasUsuario = usuario.getDiasTrabalho();
+
         double scoreDias;
 
-if (diasProjeto.isEmpty()) {
-    scoreDias = 1.0;
-} else {
-    long diasEmComum = diasProjeto.stream()
-            .filter(diasUsuario::contains)
-            .count();
+        if (diasProjeto.isEmpty()) {
+            scoreDias = 1.0;
+        } else {
+            long diasEmComum = diasProjeto.stream()
+                    .filter(diasUsuario::contains)
+                    .count();
 
-    if (diasEmComum == 0) {
-    scoreDias = 0.0;
-    
-} else {
-    scoreDias = (double) diasEmComum / diasProjeto.size();
-}
-}
+            if (diasEmComum == 0) {
+                scoreDias = 0.0;
+
+            } else {
+                scoreDias = (double) diasEmComum / diasProjeto.size();
+            }
+        }
 
         List<ProjetoServicoDto> servicosProjeto = projetoServicoRepository.findByProjetoId(projetoId);
         List<UsuarioServicoDto> servicosUsuario = usuarioServicoRepository.findByUsuarioId(usuarioId);
@@ -112,14 +111,12 @@ if (diasProjeto.isEmpty()) {
                 .countByUsuarioIdAndStatus(usuarioId, PropostaDto.Status.ACEITA);
         double scoreHistorico = Math.min(projetosConcluidos / 10.0, 1.0);
 
-        double scoreTotal =
-        (scoreSkills * 0.30)
-      + (scoreOrcamento * 0.20)
-      + (scoreHistorico * 0.15)
-      + (usuario.getReputacao() / 5.0 * 0.10)
-      + (scoreDias * 0.25);
-        
-        
+        double scoreTotal
+                = (scoreSkills * 0.30)
+                + (scoreOrcamento * 0.20)
+                + (scoreHistorico * 0.15)
+                + (usuario.getReputacao() / 5.0 * 0.10)
+                + (scoreDias * 0.25);
 
         MatchResultadoDto match = new MatchResultadoDto();
         match.setUsuarioId(usuario);
@@ -140,26 +137,40 @@ if (diasProjeto.isEmpty()) {
                     .findByUsuarioIdIdAndProjetoIdId(p.getUsuario().getId(), projetoId);
 
             List<String> dias = p.getUsuario().getDiasTrabalho()
-    .stream()
-    .sorted(Comparator.comparingInt(d -> switch (d) {
-        case DOMINGO -> 1;
-        case SEGUNDA -> 2;
-        case TERCA -> 3;
-        case QUARTA -> 4;
-        case QUINTA -> 5;
-        case SEXTA -> 6;
-        case SABADO -> 7;
-    }))
-    .map(d -> switch (d) {
-        case DOMINGO -> "DOMINGO";
-        case SEGUNDA -> "SEGUNDA";
-        case TERCA -> "TERÇA";
-        case QUARTA -> "QUARTA";
-        case QUINTA -> "QUINTA";
-        case SEXTA -> "SEXTA";
-        case SABADO -> "SÁBADO";
-    })
-    .toList();
+                    .stream()
+                    .sorted(Comparator.comparingInt(d -> switch (d) {
+                case DOMINGO ->
+                    1;
+                case SEGUNDA ->
+                    2;
+                case TERCA ->
+                    3;
+                case QUARTA ->
+                    4;
+                case QUINTA ->
+                    5;
+                case SEXTA ->
+                    6;
+                case SABADO ->
+                    7;
+            }))
+                    .map(d -> switch (d) {
+                case DOMINGO ->
+                    "DOMINGO";
+                case SEGUNDA ->
+                    "SEGUNDA";
+                case TERCA ->
+                    "TERÇA";
+                case QUARTA ->
+                    "QUARTA";
+                case QUINTA ->
+                    "QUINTA";
+                case SEXTA ->
+                    "SEXTA";
+                case SABADO ->
+                    "SÁBADO";
+            })
+                    .toList();
             PropostaScoreDto dto = new PropostaScoreDto();
             dto.setPropostaId(p.getId());
             dto.setNomeUsuario(p.getUsuario().getNome());
@@ -172,7 +183,7 @@ if (diasProjeto.isEmpty()) {
             dto.setScoreOrcamento(match.isPresent() ? match.get().getScoreOrcamento() : 0.0);
             dto.setScoreHistorico(match.isPresent() ? match.get().getScoreHistorico() : 0.0);
             dto.setUsuarioId(p.getUsuario().getId());
-            
+
             resultado.add(dto);
         }
 

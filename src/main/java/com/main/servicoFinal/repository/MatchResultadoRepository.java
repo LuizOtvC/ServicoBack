@@ -15,6 +15,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author Mateus
  */
 public interface MatchResultadoRepository extends JpaRepository<MatchResultadoDto, Long> {
-   Optional<MatchResultadoDto> findByUsuarioIdIdAndProjetoIdId(Long usuarioId, Long projetoId);
+
+    Optional<MatchResultadoDto> findByUsuarioIdIdAndProjetoIdId(Long usuarioId, Long projetoId);
+
     List<MatchResultadoDto> findByProjetoIdIdOrderByScoreTotalDesc(Long projetoId);
 }

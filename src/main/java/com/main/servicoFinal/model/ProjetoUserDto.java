@@ -12,7 +12,7 @@ import java.util.Set;
  * @author Mateus
  */
 public class ProjetoUserDto {
-    
+
     private String titulo;
     private String descricao;
     private Double orcamento;
@@ -20,17 +20,37 @@ public class ProjetoUserDto {
     private List<Long> servicosId;
     private Set<ProjetoDto.DiaSemana> diasTrabalho;
 
-    public String getTitulo() { return titulo; }
-    public void setTitulo(String titulo) { this.titulo = titulo; }
+    public String getTitulo() {
+        return titulo;
+    }
 
-    public String getDescricao() { return descricao; }
-    public void setDescricao(String descricao) { this.descricao = descricao; }
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
 
-    public Double getOrcamento() { return orcamento; }
-    public void setOrcamento(Double orcamento) { this.orcamento = orcamento; }
+    public String getDescricao() {
+        return descricao;
+    }
 
-    public List<Long> getServicosId() { return servicosId; }
-    public void setServicosId(List<Long> servicosId) { this.servicosId = servicosId; }
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
+
+    public Double getOrcamento() {
+        return orcamento;
+    }
+
+    public void setOrcamento(Double orcamento) {
+        this.orcamento = orcamento;
+    }
+
+    public List<Long> getServicosId() {
+        return servicosId;
+    }
+
+    public void setServicosId(List<Long> servicosId) {
+        this.servicosId = servicosId;
+    }
 
     public ProjetoDto.Status getStatus() {
         return status;
@@ -47,7 +67,5 @@ public class ProjetoUserDto {
     public void setDiasTrabalho(Set<ProjetoDto.DiaSemana> diasTrabalho) {
         this.diasTrabalho = diasTrabalho;
     }
-    
-    
-    
+
 }

@@ -21,6 +21,7 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "avaliacao")
 public class AvaliacaoDto {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -43,21 +44,51 @@ public class AvaliacaoDto {
     @Column
     private String comentario;
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public ProjetoDto getProjeto() { return projeto; }
-    public void setProjeto(ProjetoDto projeto) { this.projeto = projeto; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public User getAvaliador() { return avaliador; }
-    public void setAvaliador(User avaliador) { this.avaliador = avaliador; }
+    public ProjetoDto getProjeto() {
+        return projeto;
+    }
 
-    public User getAvaliado() { return avaliado; }
-    public void setAvaliado(User avaliado) { this.avaliado = avaliado; }
+    public void setProjeto(ProjetoDto projeto) {
+        this.projeto = projeto;
+    }
 
-    public Double getNota() { return nota; }
-    public void setNota(Double nota) { this.nota = nota; }
+    public User getAvaliador() {
+        return avaliador;
+    }
 
-    public String getComentario() { return comentario; }
-    public void setComentario(String comentario) { this.comentario = comentario; }
+    public void setAvaliador(User avaliador) {
+        this.avaliador = avaliador;
+    }
+
+    public User getAvaliado() {
+        return avaliado;
+    }
+
+    public void setAvaliado(User avaliado) {
+        this.avaliado = avaliado;
+    }
+
+    public Double getNota() {
+        return nota;
+    }
+
+    public void setNota(Double nota) {
+        this.nota = nota;
+    }
+
+    public String getComentario() {
+        return comentario;
+    }
+
+    public void setComentario(String comentario) {
+        this.comentario = comentario;
+    }
 }

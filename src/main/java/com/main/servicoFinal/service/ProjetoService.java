@@ -34,207 +34,208 @@ import org.springframework.web.server.ResponseStatusException;
  */
 @Service
 public class ProjetoService {
+
     @Autowired
     private UserRepository user;
-    
+
     @Autowired
     private ProjetoRepository projetoRepository;
-    
+
     @Autowired
     private ProjetoServicoRepository projetoServicoRepository;
-    
+
     @Autowired
     private ServiceRepository serviceRepository;
-    
+
     @Autowired
     private PropostaRepository propostaRepository;
-    
+
     @Autowired
     private MensagemService mensagemService;
-    
+
     @Autowired
     private PropostaService propostaService;
-    
-    public void criarProjeto(Long usuarioId, ProjetoUserDto dados) {
-        long quantidade = projetoRepository.countByUsuarioIdIdAndStatusIn(usuarioId,List.of(ProjetoDto.Status.ABERTO,ProjetoDto.Status.EM_ANDAMENTO));
 
-    if (quantidade >= 3) {
-        throw new RuntimeException(
-                "Você já possui 3 projetos em aberto ou em andamento."
-        );
+    public void criarProjeto(Long usuarioId, ProjetoUserDto dados) {
+        long quantidade = projetoRepository.countByUsuarioIdIdAndStatusIn(usuarioId, List.of(ProjetoDto.Status.ABERTO, ProjetoDto.Status.EM_ANDAMENTO));
+
+        if (quantidade >= 3) {
+            throw new RuntimeException(
+                    "Você já possui 3 projetos em aberto ou em andamento."
+            );
+        }
+        ProjetoDto projeto = new ProjetoDto();
+        projeto.setUsuarioId(user.getReferenceById(usuarioId));
+        projeto.setTitulo(dados.getTitulo());
+        projeto.setDescricao(dados.getDescricao());
+        projeto.setOrcamento(dados.getOrcamento());
+        projeto.setCriadoEm(LocalDateTime.now());
+        projeto.setStatus(ProjetoDto.Status.ABERTO);
+        projeto.setScoreRisco(0);
+        projeto.setDiasTrabalho(dados.getDiasTrabalho());
+        projetoRepository.save(projeto);
+        mensagemService.ProjetoCriado(projeto);
+
+        for (Long servicoId : dados.getServicosId()) {
+            ProjetoServicoDto ps = new ProjetoServicoDto();
+            ps.setId(new ProjetoServicoIdDto(projeto.getId(), servicoId));
+            ps.setProjeto(projeto);
+            ps.setServico(serviceRepository.getReferenceById(servicoId));
+            projetoServicoRepository.save(ps);
+        }
     }
-    ProjetoDto projeto = new ProjetoDto();
-    projeto.setUsuarioId(user.getReferenceById(usuarioId));
-    projeto.setTitulo(dados.getTitulo());
-    projeto.setDescricao(dados.getDescricao());
-    projeto.setOrcamento(dados.getOrcamento());
-    projeto.setCriadoEm(LocalDateTime.now());
-    projeto.setStatus(ProjetoDto.Status.ABERTO);
-    projeto.setScoreRisco(0);
-    projeto.setDiasTrabalho(dados.getDiasTrabalho());
-    projetoRepository.save(projeto);
-    mensagemService.ProjetoCriado(projeto);
-    
-    for (Long servicoId : dados.getServicosId()) {
-        ProjetoServicoDto ps = new ProjetoServicoDto();
-        ps.setId(new ProjetoServicoIdDto(projeto.getId(), servicoId));
-        ps.setProjeto(projeto);
-        ps.setServico(serviceRepository.getReferenceById(servicoId));
-        projetoServicoRepository.save(ps);
-    }
-}
-     
+
     public List<ProjetoDto> listarProjetos() {
         return projetoRepository.findAll();
     }
 
     public List<ProjetoResposta> listarProjetosComFiltro(
-        Long usuarioId,
-        Double orcamentoMin,
-        List<Long> servicosIds,
-        List<ProjetoDto.DiaSemana> diasSemana) {
+            Long usuarioId,
+            Double orcamentoMin,
+            List<Long> servicosIds,
+            List<ProjetoDto.DiaSemana> diasSemana) {
 
-    List<ProjetoDto> projetos = projetoRepository.findComFiltros(
-        usuarioId, orcamentoMin, servicosIds, diasSemana);
+        List<ProjetoDto> projetos = projetoRepository.findComFiltros(
+                usuarioId, orcamentoMin, servicosIds, diasSemana);
 
-    List<ProjetoResposta> resultado = new ArrayList<>();
-    for (ProjetoDto p : projetos) {
-        List<String> servicos = new ArrayList<>();
-        List<ProjetoServicoDto> ps = projetoServicoRepository.findByProjetoId(p.getId());
-        for (ProjetoServicoDto s : ps) {
-            servicos.add(s.getServico().getNome());
+        List<ProjetoResposta> resultado = new ArrayList<>();
+        for (ProjetoDto p : projetos) {
+            List<String> servicos = new ArrayList<>();
+            List<ProjetoServicoDto> ps = projetoServicoRepository.findByProjetoId(p.getId());
+            for (ProjetoServicoDto s : ps) {
+                servicos.add(s.getServico().getNome());
+            }
+            List<String> dias = p.getDiasTrabalho().stream().map(Enum::name).toList();
+            resultado.add(new ProjetoResposta(
+                    p.getId(), p.getTitulo(), p.getDescricao(), p.getOrcamento(),
+                    p.getStatus().name(), servicos, p.getUsuarioId().getId(),
+                    p.getScoreRisco(), p.getCriadoEm(), dias, null
+            ));
         }
-        List<String> dias = p.getDiasTrabalho().stream().map(Enum::name).toList();
-        resultado.add(new ProjetoResposta(
-            p.getId(), p.getTitulo(), p.getDescricao(), p.getOrcamento(),
-            p.getStatus().name(), servicos, p.getUsuarioId().getId(),
-            p.getScoreRisco(), p.getCriadoEm(), dias, null
-        ));
-    }
-    return resultado;
-}
-    
-  public ProjetoResposta projetoPorId(Long id) {
-    ProjetoDto p = projetoRepository.findById(id)
-        .orElseThrow(() -> new RuntimeException("Projeto não encontrado"));
-
-    List<String> servicos = new ArrayList<>();
-    List<ProjetoServicoDto> ps = projetoServicoRepository.findByProjetoId(p.getId());
-    for (ProjetoServicoDto s : ps) {
-        servicos.add(s.getServico().getNome());
-    }
-List<String> dias = p.getDiasTrabalho()
-        .stream()
-        .map(Enum::name)
-        .toList();
-   ProjetoResposta resposta = new ProjetoResposta(
-    p.getId(),
-    p.getTitulo(),
-    p.getDescricao(),
-    p.getOrcamento(),
-    p.getStatus().name(),
-    servicos,
-    p.getUsuarioId().getId(),
-    p.getScoreRisco(),
-    p.getCriadoEm(),
-    dias,
-    null
-);
-
-    Optional<PropostaDto> propostaAceitaOpt = propostaRepository.findByProjeto_IdAndStatus(id, PropostaDto.Status.ACEITA);
-
-    if (propostaAceitaOpt.isPresent()) {
-        PropostaDto prop = propostaAceitaOpt.get();
-        PropostaRespostaDto dto = new PropostaRespostaDto();
-        dto.setId(prop.getId());
-        dto.setProjetoId(prop.getProjeto().getId());
-        dto.setNomeProjeto(prop.getProjeto().getTitulo());
-        dto.setUsuarioId(prop.getUsuario().getId());
-        dto.setNomeUsuario(prop.getUsuario().getNome());
-        dto.setValorProposto(prop.getValorProposto());
-        dto.setDescricao(prop.getDescricao());
-        dto.setStatus(prop.getStatus().name());
-        dto.setEnviadoEm(prop.getEnviadoEm());
-        resposta.setPropostaAceita(dto);
+        return resultado;
     }
 
-    return resposta;
-}
-   public List<ProjetoResposta> listarProjetosUsuario(Long id) {
-    List<ProjetoDto> projetos = projetoRepository.findByUsuarioIdId(id);
-    List<ProjetoResposta> resultado = new ArrayList<>();
+    public ProjetoResposta projetoPorId(Long id) {
+        ProjetoDto p = projetoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Projeto não encontrado"));
 
-    for (ProjetoDto p : projetos) {
         List<String> servicos = new ArrayList<>();
         List<ProjetoServicoDto> ps = projetoServicoRepository.findByProjetoId(p.getId());
         for (ProjetoServicoDto s : ps) {
             servicos.add(s.getServico().getNome());
         }
         List<String> dias = p.getDiasTrabalho()
-    .stream()
-    .sorted()
-    .map(Enum::name)
-    .toList();
+                .stream()
+                .map(Enum::name)
+                .toList();
+        ProjetoResposta resposta = new ProjetoResposta(
+                p.getId(),
+                p.getTitulo(),
+                p.getDescricao(),
+                p.getOrcamento(),
+                p.getStatus().name(),
+                servicos,
+                p.getUsuarioId().getId(),
+                p.getScoreRisco(),
+                p.getCriadoEm(),
+                dias,
+                null
+        );
 
-resultado.add(new ProjetoResposta(
-        p.getId(),
-        p.getTitulo(),
-        p.getDescricao(),
-        p.getOrcamento(),
-        p.getStatus().name(),
-        servicos,
-        p.getUsuarioId().getId(),
-        p.getScoreRisco(),
-        p.getCriadoEm(),
-        dias,
-        null
-));
+        Optional<PropostaDto> propostaAceitaOpt = propostaRepository.findByProjeto_IdAndStatus(id, PropostaDto.Status.ACEITA);
+
+        if (propostaAceitaOpt.isPresent()) {
+            PropostaDto prop = propostaAceitaOpt.get();
+            PropostaRespostaDto dto = new PropostaRespostaDto();
+            dto.setId(prop.getId());
+            dto.setProjetoId(prop.getProjeto().getId());
+            dto.setNomeProjeto(prop.getProjeto().getTitulo());
+            dto.setUsuarioId(prop.getUsuario().getId());
+            dto.setNomeUsuario(prop.getUsuario().getNome());
+            dto.setValorProposto(prop.getValorProposto());
+            dto.setDescricao(prop.getDescricao());
+            dto.setStatus(prop.getStatus().name());
+            dto.setEnviadoEm(prop.getEnviadoEm());
+            resposta.setPropostaAceita(dto);
+        }
+
+        return resposta;
     }
-    return resultado;
-}
-   
-   public void projetoEmAndamento(Long id, String token) {
-    ProjetoDto projeto = projetoRepository.findById(id)
-        .orElseThrow(() -> new RuntimeException("Projeto não encontrado"));
-    projeto.setStatus(ProjetoDto.Status.EM_ANDAMENTO);
-    projetoRepository.save(projeto);
-    mensagemService.ProjetoEmAndamento(projeto);
-    
-    PropostaDto proposta = propostaRepository
-    .findByProjetoAndStatus(projeto, PropostaDto.Status.ACEITA)
-    .orElseThrow(() -> new RuntimeException("Nenhuma proposta aceita encontrada"));
-    mensagemService.ProjetoEmAndamentoProposta(proposta);
-}
-  public void projetoConcluido(Long id, String token) {
-    ProjetoDto projeto = projetoRepository.findById(id)
-        .orElseThrow(() -> new RuntimeException("Projeto não encontrado"));
 
-    projeto.setStatus(ProjetoDto.Status.CONCLUIDO);
-    projetoRepository.save(projeto);
+    public List<ProjetoResposta> listarProjetosUsuario(Long id) {
+        List<ProjetoDto> projetos = projetoRepository.findByUsuarioIdId(id);
+        List<ProjetoResposta> resultado = new ArrayList<>();
 
-    mensagemService.ProjetoConcluido(projeto);
+        for (ProjetoDto p : projetos) {
+            List<String> servicos = new ArrayList<>();
+            List<ProjetoServicoDto> ps = projetoServicoRepository.findByProjetoId(p.getId());
+            for (ProjetoServicoDto s : ps) {
+                servicos.add(s.getServico().getNome());
+            }
+            List<String> dias = p.getDiasTrabalho()
+                    .stream()
+                    .sorted()
+                    .map(Enum::name)
+                    .toList();
 
-    propostaRepository.findByProjetoAndStatus(projeto, PropostaDto.Status.ACEITA)
-        .ifPresent(proposta -> {
-            propostaService.concluirProposta(proposta.getId());
-            
-        });
-}
-   
-   public void projetoCancelado(Long id) {
-    ProjetoDto projeto = projetoRepository.findById(id)
-        .orElseThrow(() -> new RuntimeException("Projeto não encontrado"));
-    projeto.setStatus(ProjetoDto.Status.CANCELADO);
-    projetoRepository.save(projeto);
-    mensagemService.ProjetoCancelado(projeto);
+            resultado.add(new ProjetoResposta(
+                    p.getId(),
+                    p.getTitulo(),
+                    p.getDescricao(),
+                    p.getOrcamento(),
+                    p.getStatus().name(),
+                    servicos,
+                    p.getUsuarioId().getId(),
+                    p.getScoreRisco(),
+                    p.getCriadoEm(),
+                    dias,
+                    null
+            ));
+        }
+        return resultado;
+    }
 
-    List<PropostaDto> propostas = propostaRepository.findByProjeto(projeto);
-    for (PropostaDto proposta : propostas) {
-        if (proposta.getStatus() == PropostaDto.Status.PENDENTE || proposta.getStatus() == PropostaDto.Status.ACEITA) {
-            propostaService.cancelarProposta(proposta.getId());
+    public void projetoEmAndamento(Long id, String token) {
+        ProjetoDto projeto = projetoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Projeto não encontrado"));
+        projeto.setStatus(ProjetoDto.Status.EM_ANDAMENTO);
+        projetoRepository.save(projeto);
+        mensagemService.ProjetoEmAndamento(projeto);
+
+        PropostaDto proposta = propostaRepository
+                .findByProjetoAndStatus(projeto, PropostaDto.Status.ACEITA)
+                .orElseThrow(() -> new RuntimeException("Nenhuma proposta aceita encontrada"));
+        mensagemService.ProjetoEmAndamentoProposta(proposta);
+    }
+
+    public void projetoConcluido(Long id, String token) {
+        ProjetoDto projeto = projetoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Projeto não encontrado"));
+
+        projeto.setStatus(ProjetoDto.Status.CONCLUIDO);
+        projetoRepository.save(projeto);
+
+        mensagemService.ProjetoConcluido(projeto);
+
+        propostaRepository.findByProjetoAndStatus(projeto, PropostaDto.Status.ACEITA)
+                .ifPresent(proposta -> {
+                    propostaService.concluirProposta(proposta.getId());
+
+                });
+    }
+
+    public void projetoCancelado(Long id) {
+        ProjetoDto projeto = projetoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Projeto não encontrado"));
+        projeto.setStatus(ProjetoDto.Status.CANCELADO);
+        projetoRepository.save(projeto);
+        mensagemService.ProjetoCancelado(projeto);
+
+        List<PropostaDto> propostas = propostaRepository.findByProjeto(projeto);
+        for (PropostaDto proposta : propostas) {
+            if (proposta.getStatus() == PropostaDto.Status.PENDENTE || proposta.getStatus() == PropostaDto.Status.ACEITA) {
+                propostaService.cancelarProposta(proposta.getId());
+            }
         }
     }
 }
-}
-     
-

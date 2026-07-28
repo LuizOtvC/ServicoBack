@@ -24,35 +24,38 @@ import org.springframework.web.server.ResponseStatusException;
  */
 @Service
 public class TokenService {
+
     @Value("${api.security.token.secret}")
     private String secret;
-    
-    public SecretKey getKeySign(){
+
+    public SecretKey getKeySign() {
         byte[] keyBytes = Decoders.BASE64.decode(this.secret);
         return Keys.hmacShaKeyFor(keyBytes);
     }
-    public String gerarToken(User user){
 
-    if(user == null ||
-       user.getId() == null ||
-       user.getNome() == null ||
-       user.getEmail() == null){
+    public String gerarToken(User user) {
 
-        throw new ResponseStatusException(
-            HttpStatus.BAD_REQUEST,
-            "Dados do usuário inválidos"
-        );
+        if (user == null
+                || user.getId() == null
+                || user.getNome() == null
+                || user.getEmail() == null) {
+
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Dados do usuário inválidos"
+            );
+        }
+
+        return Jwts.builder()
+                .subject(user.getEmail())
+                .claim("id", user.getId())
+                .claim("nome", user.getNome())
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + 3000000))
+                .signWith(this.getKeySign())
+                .compact();
     }
 
-    return Jwts.builder()
-            .subject(user.getEmail())
-            .claim("id", user.getId())
-            .claim("nome", user.getNome())
-            .issuedAt(new Date())
-            .expiration(new Date(System.currentTimeMillis() + 3000000))
-            .signWith(this.getKeySign())
-            .compact();
-}
     public boolean validarToken(String token) {
         try {
             // Cria um parser JWT com a chave secreta para validação
@@ -64,28 +67,26 @@ public class TokenService {
             // Se chegou aqui, o token é válido
             return true;
         } catch (JwtException | IllegalArgumentException e) {
-            
-             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token expirado ou invalido");
+
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token expirado ou invalido");
         }
     }
-    
-    public User extrairClaims(String token){
 
-    Claims claim = Jwts.parser()
-            .verifyWith(this.getKeySign())
-            .build()
-            .parseSignedClaims(token)
-            .getPayload();
+    public User extrairClaims(String token) {
 
-    User user = new User();
+        Claims claim = Jwts.parser()
+                .verifyWith(this.getKeySign())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
 
-    user.setId(claim.get("id", Long.class));
-    user.setNome(claim.get("nome", String.class));
-    user.setEmail(claim.getSubject());
+        User user = new User();
 
-    return user;
-}
-    
-    
+        user.setId(claim.get("id", Long.class));
+        user.setNome(claim.get("nome", String.class));
+        user.setEmail(claim.getSubject());
+
+        return user;
+    }
 
 }

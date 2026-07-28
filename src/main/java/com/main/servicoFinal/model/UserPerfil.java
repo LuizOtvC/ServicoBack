@@ -26,8 +26,6 @@ public class UserPerfil {
         this.diasTrabalho = diasTrabalho;
     }
 
-    
-
     public String getNome() {
         return nome;
     }
@@ -84,5 +82,4 @@ public class UserPerfil {
         this.diasTrabalho = diasTrabalho;
     }
 
-    
 }

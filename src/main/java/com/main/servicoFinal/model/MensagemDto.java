@@ -24,34 +24,32 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "mensagem")
 public class MensagemDto {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)
     private User usuarioId;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "projeto_id", nullable = false)
     private ProjetoDto projetoId;
-    
-    @Column (nullable = false, length = 200)
-    private String mensagem;  
-    
+
+    @Column(nullable = false, length = 200)
+    private String mensagem;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Status status;
-    
+
     @Column(nullable = false, name = "enviado_em")
     private LocalDateTime enviadoEm;
- 
 
     public enum Status {
         ACEITA, RECUSADA, CANCELADA, EM_ANDAMENTO, CONCLUIDO, CANCELADO, CRIADO, ENVIADA, PROPOSTA
-    }   
-    
+    }
 
     public Long getId() {
         return id;
@@ -100,7 +98,5 @@ public class MensagemDto {
     public void setEnviadoEm(LocalDateTime enviadoEm) {
         this.enviadoEm = enviadoEm;
     }
-    
-    
-    
+
 }

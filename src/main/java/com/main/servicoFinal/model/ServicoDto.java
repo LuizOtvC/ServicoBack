@@ -18,7 +18,7 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "servico")
 public class ServicoDto {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -40,9 +40,5 @@ public class ServicoDto {
     public void setNome(String nome) {
         this.nome = nome;
     }
-    
-    
-    
-    
-    
+
 }

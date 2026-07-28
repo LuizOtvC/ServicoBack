@@ -27,20 +27,35 @@ public class UsuarioServicoDto {
         BASICO, INTERMEDIARIO, AVANCADO
     }
 
-    public UsuarioServicoId getId() { return id; }
-    public void setId(UsuarioServicoId id) { this.id = id; }
+    public UsuarioServicoId getId() {
+        return id;
+    }
+
+    public void setId(UsuarioServicoId id) {
+        this.id = id;
+    }
 
     public User getUsuario() {
-        return usuario; 
+        return usuario;
     }
-    
+
     public void setUsuario(User usuario) {
-        this.usuario = usuario; 
+        this.usuario = usuario;
     }
 
-    public ServicoDto getServico() { return servico; }
-    public void setServico(ServicoDto servico) { this.servico = servico; }
+    public ServicoDto getServico() {
+        return servico;
+    }
 
-    public Nivel getNivel() { return nivel; }
-    public void setNivel(Nivel nivel) { this.nivel = nivel; }
+    public void setServico(ServicoDto servico) {
+        this.servico = servico;
+    }
+
+    public Nivel getNivel() {
+        return nivel;
+    }
+
+    public void setNivel(Nivel nivel) {
+        this.nivel = nivel;
+    }
 }

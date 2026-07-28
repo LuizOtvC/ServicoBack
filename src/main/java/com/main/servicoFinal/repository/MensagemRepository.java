@@ -16,6 +16,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MensagemRepository extends JpaRepository<MensagemDto, Long> {
 
-   List<MensagemDto> findByUsuarioIdIdOrderByIdDesc(Long usuarioId);
-    
+    List<MensagemDto> findByUsuarioIdIdOrderByIdDesc(Long usuarioId);
+
 }

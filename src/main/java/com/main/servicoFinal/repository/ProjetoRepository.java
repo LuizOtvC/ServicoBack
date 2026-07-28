@@ -14,12 +14,13 @@ import org.springframework.data.repository.query.Param;
  *
  * @author Mateus
  */
-
 public interface ProjetoRepository extends JpaRepository<ProjetoDto, Long> {
+
     List<ProjetoDto> findByStatusAndUsuarioIdIdNot(ProjetoDto.Status status, Long usuarioId);
+
     List<ProjetoDto> findByUsuarioIdId(Long usuarioId);
-    
-   @Query("""
+
+    @Query("""
     SELECT DISTINCT p FROM ProjetoDto p
     LEFT JOIN ProjetoServicoDto ps ON ps.projeto = p
     WHERE p.status = 'ABERTO'
@@ -31,12 +32,13 @@ public interface ProjetoRepository extends JpaRepository<ProjetoDto, Long> {
         WHERE pd = p AND d IN :diasSemana
     ))
 """)
-List<ProjetoDto> findComFiltros(
-    @Param("usuarioId") Long usuarioId,
-    @Param("orcamentoMin") Double orcamentoMin,
-    @Param("servicosIds") List<Long> servicosIds,
-    @Param("diasSemana") List<ProjetoDto.DiaSemana> diasSemana
-);
- long countByUsuarioIdIdAndStatusIn(Long usuarioId, List<ProjetoDto.Status> status);
-    
+    List<ProjetoDto> findComFiltros(
+            @Param("usuarioId") Long usuarioId,
+            @Param("orcamentoMin") Double orcamentoMin,
+            @Param("servicosIds") List<Long> servicosIds,
+            @Param("diasSemana") List<ProjetoDto.DiaSemana> diasSemana
+    );
+
+    long countByUsuarioIdIdAndStatusIn(Long usuarioId, List<ProjetoDto.Status> status);
+
 }

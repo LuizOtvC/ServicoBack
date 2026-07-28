@@ -17,6 +17,7 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface ServiceRepository extends JpaRepository<ServicoDto, Long> {
-   public List<ServicoDto> findAllByOrderByIdAsc();
-    
+
+    public List<ServicoDto> findAllByOrderByIdAsc();
+
 }
