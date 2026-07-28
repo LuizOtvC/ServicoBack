@@ -53,7 +53,7 @@ public class PropostaDto {
     
 
     public enum Status {
-        PENDENTE, ACEITA, RECUSADA, CANCELADA
+        PENDENTE, ACEITA, RECUSADA, CANCELADA, CONCLUIDA
     }
 
     public Long getId() {

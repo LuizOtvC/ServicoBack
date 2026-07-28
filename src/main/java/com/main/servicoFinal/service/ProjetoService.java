@@ -217,7 +217,7 @@ resultado.add(new ProjetoResposta(
     propostaRepository.findByProjetoAndStatus(projeto, PropostaDto.Status.ACEITA)
         .ifPresent(proposta -> {
             propostaService.concluirProposta(proposta.getId());
-            mensagemService.ProjetoConcluidoProposta(proposta);
+            
         });
 }
    
