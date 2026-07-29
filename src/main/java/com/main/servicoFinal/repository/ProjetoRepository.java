@@ -41,4 +41,6 @@ public interface ProjetoRepository extends JpaRepository<ProjetoDto, Long> {
 
     long countByUsuarioIdIdAndStatusIn(Long usuarioId, List<ProjetoDto.Status> status);
 
+    public List<ProjetoDto> findByUsuarioIdIdAndStatusNot(Long id, ProjetoDto.Status status);
+
 }

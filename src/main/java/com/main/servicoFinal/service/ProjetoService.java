@@ -89,11 +89,7 @@ public class ProjetoService {
         return projetoRepository.findAll();
     }
 
-    public List<ProjetoResposta> listarProjetosComFiltro(
-            Long usuarioId,
-            Double orcamentoMin,
-            List<Long> servicosIds,
-            List<ProjetoDto.DiaSemana> diasSemana) {
+    public List<ProjetoResposta> listarProjetosComFiltro(Long usuarioId, Double orcamentoMin, List<Long> servicosIds, List<ProjetoDto.DiaSemana> diasSemana) {
 
         List<ProjetoDto> projetos = projetoRepository.findComFiltros(
                 usuarioId, orcamentoMin, servicosIds, diasSemana);
@@ -106,11 +102,7 @@ public class ProjetoService {
                 servicos.add(s.getServico().getNome());
             }
             List<String> dias = p.getDiasTrabalho().stream().map(Enum::name).toList();
-            resultado.add(new ProjetoResposta(
-                    p.getId(), p.getTitulo(), p.getDescricao(), p.getOrcamento(),
-                    p.getStatus().name(), servicos, p.getUsuarioId().getId(),
-                    p.getScoreRisco(), p.getCriadoEm(), dias, null
-            ));
+            resultado.add(new ProjetoResposta(p.getId(), p.getTitulo(), p.getDescricao(), p.getOrcamento(), p.getStatus().name(), servicos, p.getUsuarioId().getId(), p.getScoreRisco(), p.getCriadoEm(), dias, null));
         }
         return resultado;
     }
@@ -163,7 +155,7 @@ public class ProjetoService {
     }
 
     public List<ProjetoResposta> listarProjetosUsuario(Long id) {
-        List<ProjetoDto> projetos = projetoRepository.findByUsuarioIdId(id);
+        List<ProjetoDto> projetos = projetoRepository.findByUsuarioIdIdAndStatusNot(id,ProjetoDto.Status.ARQUIVADO);
         List<ProjetoResposta> resultado = new ArrayList<>();
 
         for (ProjetoDto p : projetos) {
@@ -198,6 +190,12 @@ public class ProjetoService {
     public void projetoEmAndamento(Long id, String token) {
         ProjetoDto projeto = projetoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Projeto não encontrado"));
+        List<PropostaDto> pendentes = propostaRepository.findAllByProjetoAndStatus(projeto, PropostaDto.Status.PENDENTE);
+        for (PropostaDto p : pendentes) {
+            p.setStatus(PropostaDto.Status.CANCELADA);
+            propostaRepository.save(p);
+            mensagemService.PropostaCancelada(p);
+        }
         projeto.setStatus(ProjetoDto.Status.EM_ANDAMENTO);
         projetoRepository.save(projeto);
         mensagemService.ProjetoEmAndamento(projeto);
@@ -237,5 +235,14 @@ public class ProjetoService {
                 propostaService.cancelarProposta(proposta.getId());
             }
         }
+    }
+
+    public void arquivarProjeto(Long id) {
+        ProjetoDto projeto = projetoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Projeto não encontrado"));
+        projeto.setStatus(ProjetoDto.Status.ARQUIVADO);
+        projetoRepository.save(projeto);
+        mensagemService.ProjetoArquivado(projeto);
+
     }
 }

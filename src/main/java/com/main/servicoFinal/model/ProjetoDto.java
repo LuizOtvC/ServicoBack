@@ -66,7 +66,7 @@ public class ProjetoDto {
     private Set<DiaSemana> diasTrabalho = new HashSet<>();
 
     public enum Status {
-        ABERTO, EM_ANDAMENTO, CONCLUIDO, CANCELADO
+        ABERTO, EM_ANDAMENTO, CONCLUIDO, CANCELADO, ARQUIVADO
     }
 
     public enum DiaSemana {

@@ -48,7 +48,7 @@ public class MensagemDto {
     private LocalDateTime enviadoEm;
 
     public enum Status {
-        ACEITA, RECUSADA, CANCELADA, EM_ANDAMENTO, CONCLUIDO, CANCELADO, CRIADO, ENVIADA, PROPOSTA
+        ACEITA, RECUSADA, CANCELADA, EM_ANDAMENTO, CONCLUIDO, CANCELADO, CRIADO, ENVIADA, PROPOSTA, ARQUIVADO
     }
 
     public Long getId() {

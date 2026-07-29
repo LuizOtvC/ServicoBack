@@ -148,6 +148,16 @@ public class MensagemService {
         mensagem.setEnviadoEm(LocalDateTime.now());
         mensagemRepository.save(mensagem);
     }
+    
+    public void ProjetoArquivado(ProjetoDto projeto) {
+        MensagemDto mensagem = new MensagemDto();
+        mensagem.setUsuarioId(projeto.getUsuarioId());
+        mensagem.setProjetoId(projeto);
+        mensagem.setMensagem("Projeto arquivado com sucesso");
+        mensagem.setStatus(MensagemDto.Status.ARQUIVADO);
+        mensagem.setEnviadoEm(LocalDateTime.now());
+        mensagemRepository.save(mensagem);
+    }
 
     public void ProjetoCanceladoProposta(PropostaDto proposta) {
         MensagemDto mensagem = new MensagemDto();

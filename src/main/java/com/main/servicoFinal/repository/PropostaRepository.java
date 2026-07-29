@@ -25,6 +25,8 @@ public interface PropostaRepository extends JpaRepository<PropostaDto, Long> {
     Optional<PropostaDto> findByProjeto_IdAndStatus(Long id, PropostaDto.Status status);
 
     Optional<PropostaDto> findByProjetoAndStatus(ProjetoDto projeto, PropostaDto.Status status);
+    
+    List<PropostaDto> findAllByProjetoAndStatus(ProjetoDto projeto, PropostaDto.Status status);
 
     boolean existsByUsuarioIdAndProjetoId(Long usuarioId, Long projetoId);
 
@@ -37,5 +39,11 @@ public interface PropostaRepository extends JpaRepository<PropostaDto, Long> {
     public boolean existsByProjetoIdAndStatus(Long id, PropostaDto.Status status);
 
     Optional<PropostaDto> findByProjetoIdAndStatus(Long projetoId, PropostaDto.Status status);
+
+    public List<PropostaDto> findByUsuarioIdAndStatus(Long id, PropostaDto.Status status);
+
+    public long countByUsuarioIdAndProjetoStatus(Long usuarioId, ProjetoDto.Status status);
+
+    
 
 }

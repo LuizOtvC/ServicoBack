@@ -107,8 +107,7 @@ public class MatchService {
             scoreOrcamento = orcamentoProjeto / valorProposto;
         }
 
-        long projetosConcluidos = propostaRepository
-                .countByUsuarioIdAndStatus(usuarioId, PropostaDto.Status.ACEITA);
+        long projetosConcluidos = propostaRepository.countByUsuarioIdAndProjetoStatus(usuarioId, ProjetoDto.Status.CONCLUIDO);
         double scoreHistorico = Math.min(projetosConcluidos / 10.0, 1.0);
 
         double scoreTotal
@@ -185,6 +184,16 @@ public class MatchService {
             dto.setUsuarioId(p.getUsuario().getId());
 
             resultado.add(dto);
+            List<PropostaDto> propostasAceitas = propostaRepository.findByUsuarioIdAndStatus(p.getUsuario().getId(), PropostaDto.Status.ACEITA);
+
+Set<ProjetoDto.DiaSemana> diasProjeto = projetoRepository
+    .getReferenceById(projetoId).getDiasTrabalho();
+
+boolean temConflito = propostasAceitas.stream()
+    .anyMatch(aceita -> aceita.getProjeto().getDiasTrabalho().stream()
+        .anyMatch(diasProjeto::contains));
+
+dto.setTemConflitoDias(temConflito);
         }
 
         resultado.sort((a, b) -> Double.compare(b.getScoreTotal(), a.getScoreTotal()));
