@@ -11,6 +11,13 @@ import com.main.servicoFinal.model.PropostaDto;
 import com.main.servicoFinal.model.PropostaScoreDto;
 import com.main.servicoFinal.model.User;
 import com.main.servicoFinal.model.User.DiaSemana;
+import static com.main.servicoFinal.model.User.DiaSemana.DOMINGO;
+import static com.main.servicoFinal.model.User.DiaSemana.QUARTA;
+import static com.main.servicoFinal.model.User.DiaSemana.QUINTA;
+import static com.main.servicoFinal.model.User.DiaSemana.SABADO;
+import static com.main.servicoFinal.model.User.DiaSemana.SEGUNDA;
+import static com.main.servicoFinal.model.User.DiaSemana.SEXTA;
+import static com.main.servicoFinal.model.User.DiaSemana.TERCA;
 import com.main.servicoFinal.model.UsuarioServicoDto;
 import com.main.servicoFinal.repository.MatchResultadoRepository;
 import com.main.servicoFinal.repository.ProjetoRepository;
@@ -127,6 +134,52 @@ public class MatchService {
         matchRepository.save(match);
     }
 
+    public void calcularMatchProjeto(Long usuarioId, Long projetoId) {
+        User usuario = userRepository.getReferenceById(usuarioId);
+        ProjetoDto projeto = projetoRepository.getReferenceById(projetoId);
+
+        Set<ProjetoDto.DiaSemana> diasProjeto = projeto.getDiasTrabalho();
+        Set<DiaSemana> diasUsuario = usuario.getDiasTrabalho();
+        double scoreDias;
+        if (diasProjeto.isEmpty()) {
+            scoreDias = 1.0;
+        } else {
+            long diasEmComum = diasProjeto.stream()
+                    .filter(diasUsuario::contains)
+                    .count();
+            scoreDias = diasEmComum > 0 ? 1.0 : 0.0;
+        }
+
+        List<ProjetoServicoDto> servicosProjeto = projetoServicoRepository.findByProjetoId(projetoId);
+        List<UsuarioServicoDto> servicosUsuario = usuarioServicoRepository.findByUsuarioId(usuarioId);
+        boolean temAlgumServico = servicosProjeto.stream()
+                .anyMatch(ps -> servicosUsuario.stream()
+                .anyMatch(us -> us.getServico().getId().equals(ps.getServico().getId())));
+        double scoreSkills = temAlgumServico ? 1.0 : 0.0;
+
+        long projetosConcluidos = propostaRepository
+                .countByUsuarioIdAndProjetoStatus(usuarioId, ProjetoDto.Status.CONCLUIDO);
+        double scoreHistorico = Math.min(projetosConcluidos / 10.0, 1.0);
+
+        double scoreReputacao = usuario.getReputacao() / 5.0;
+
+        double scoreTotal = (scoreSkills * 0.35)
+                + (scoreDias * 0.30)
+                + (scoreHistorico * 0.20)
+                + (scoreReputacao * 0.15);
+        
+        Optional<MatchResultadoDto> existente = matchRepository.findByUsuarioIdIdAndProjetoIdId(usuarioId, projetoId);
+
+        MatchResultadoDto match = existente.orElse(new MatchResultadoDto());
+        match.setUsuarioId(usuario);
+        match.setProjetoId(projeto);
+        match.setScoreTotal(scoreTotal);
+        match.setScoreServico(scoreSkills);
+        match.setScoreOrcamento(0.0);
+        match.setScoreHistorico(scoreHistorico);
+        matchRepository.save(match);
+    }
+
     public List<PropostaScoreDto> listarPropostasComScore(Long projetoId) {
         List<PropostaDto> propostas = propostaRepository.findByProjetoId(projetoId);
         List<PropostaScoreDto> resultado = new ArrayList<>();
@@ -186,14 +239,86 @@ public class MatchService {
             resultado.add(dto);
             List<PropostaDto> propostasAceitas = propostaRepository.findByUsuarioIdAndStatus(p.getUsuario().getId(), PropostaDto.Status.ACEITA);
 
-Set<ProjetoDto.DiaSemana> diasProjeto = projetoRepository
-    .getReferenceById(projetoId).getDiasTrabalho();
+            Set<ProjetoDto.DiaSemana> diasProjeto = projetoRepository
+                    .getReferenceById(projetoId).getDiasTrabalho();
 
-boolean temConflito = propostasAceitas.stream()
-    .anyMatch(aceita -> aceita.getProjeto().getDiasTrabalho().stream()
-        .anyMatch(diasProjeto::contains));
+            boolean temConflito = propostasAceitas.stream()
+                    .anyMatch(aceita -> aceita.getProjeto().getDiasTrabalho().stream()
+                    .anyMatch(diasProjeto::contains));
 
-dto.setTemConflitoDias(temConflito);
+            dto.setTemConflitoDias(temConflito);
+        }
+
+        resultado.sort((a, b) -> Double.compare(b.getScoreTotal(), a.getScoreTotal()));
+        return resultado;
+    }
+
+    public List<PropostaScoreDto> listarProjetoscomScore(Long projetoId) {
+        List<PropostaDto> propostas = propostaRepository.findByProjetoId(projetoId);
+        List<PropostaScoreDto> resultado = new ArrayList<>();
+
+        for (PropostaDto p : propostas) {
+            Optional<MatchResultadoDto> match = matchRepository.findByUsuarioIdIdAndProjetoIdId(p.getUsuario().getId(), projetoId);
+
+            List<String> dias = p.getUsuario().getDiasTrabalho()
+                    .stream()
+                    .sorted(Comparator.comparingInt(d -> switch (d) {
+                case DOMINGO ->
+                    1;
+                case SEGUNDA ->
+                    2;
+                case TERCA ->
+                    3;
+                case QUARTA ->
+                    4;
+                case QUINTA ->
+                    5;
+                case SEXTA ->
+                    6;
+                case SABADO ->
+                    7;
+            }))
+                    .map(d -> switch (d) {
+                case DOMINGO ->
+                    "DOMINGO";
+                case SEGUNDA ->
+                    "SEGUNDA";
+                case TERCA ->
+                    "TERÇA";
+                case QUARTA ->
+                    "QUARTA";
+                case QUINTA ->
+                    "QUINTA";
+                case SEXTA ->
+                    "SEXTA";
+                case SABADO ->
+                    "SÁBADO";
+            })
+                    .toList();
+            PropostaScoreDto dto = new PropostaScoreDto();
+            dto.setPropostaId(p.getId());
+            dto.setNomeUsuario(p.getUsuario().getNome());
+            dto.setValorProposto(p.getValorProposto());
+            dto.setDescricao(p.getDescricao());
+            dto.setDiasTrabalho(dias);
+            dto.setStatus(p.getStatus().name());
+            dto.setScoreTotal(match.isPresent() ? match.get().getScoreTotal() : 0.0);
+            dto.setScoreServicos(match.isPresent() ? match.get().getScoreServico() : 0.0);
+            dto.setScoreOrcamento(match.isPresent() ? match.get().getScoreOrcamento() : 0.0);
+            dto.setScoreHistorico(match.isPresent() ? match.get().getScoreHistorico() : 0.0);
+            dto.setUsuarioId(p.getUsuario().getId());
+
+            resultado.add(dto);
+            List<PropostaDto> propostasAceitas = propostaRepository.findByUsuarioIdAndStatus(p.getUsuario().getId(), PropostaDto.Status.ACEITA);
+
+            Set<ProjetoDto.DiaSemana> diasProjeto = projetoRepository
+                    .getReferenceById(projetoId).getDiasTrabalho();
+
+            boolean temConflito = propostasAceitas.stream()
+                    .anyMatch(aceita -> aceita.getProjeto().getDiasTrabalho().stream()
+                    .anyMatch(diasProjeto::contains));
+
+            dto.setTemConflitoDias(temConflito);
         }
 
         resultado.sort((a, b) -> Double.compare(b.getScoreTotal(), a.getScoreTotal()));

@@ -9,6 +9,7 @@ import com.main.servicoFinal.model.ProjetoResposta;
 import com.main.servicoFinal.model.ProjetoUserDto;
 import com.main.servicoFinal.model.User;
 import com.main.servicoFinal.model.UsuarioServicoDto;
+import com.main.servicoFinal.service.MatchService;
 import com.main.servicoFinal.service.ProjetoService;
 import com.main.servicoFinal.service.ServicoService;
 import com.main.servicoFinal.service.TokenService;
@@ -37,6 +38,9 @@ public class ProjetoController {
     @Autowired
     private TokenService tokens;
     
+    @Autowired
+    private MatchService matchService;
+    
     @PostMapping("/criar")
     public void criarProjeto(@RequestBody ProjetoUserDto dados, @RequestHeader("Authorization") String auth) {
     String token = auth.replace("Bearer ", "");
@@ -63,7 +67,8 @@ public List<ProjetoResposta> listarComFiltro(@RequestHeader("Authorization") Str
 @GetMapping("/listarId/{id}")
 public ProjetoResposta listarProjetoId(@RequestHeader("Authorization") String auth, @PathVariable Long id) {
     String token = auth.replace("Bearer ", "");
-    tokens.extrairClaims(token);
+    User usertoken = tokens.extrairClaims(token);
+    matchService.calcularMatchProjeto(usertoken.getId(), id);
     return service.projetoPorId(id);
 }
 @GetMapping("/listarFiltroUser")

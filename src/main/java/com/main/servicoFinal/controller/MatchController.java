@@ -4,7 +4,10 @@
  */
 package com.main.servicoFinal.controller;
 
+import com.main.servicoFinal.model.MatchResultadoDto;
 import com.main.servicoFinal.model.PropostaScoreDto;
+import com.main.servicoFinal.model.User;
+import com.main.servicoFinal.repository.MatchResultadoRepository;
 import com.main.servicoFinal.service.MatchService;
 import com.main.servicoFinal.service.MensagemService;
 import com.main.servicoFinal.service.TokenService;
@@ -28,8 +31,16 @@ public class MatchController {
     private MatchService service;
 
     @Autowired
+    private MatchResultadoRepository repositoryMatch;
+
+    @Autowired
     private TokenService tokens;
 
-    
+    @GetMapping("/score/{projetoId}")
+    public Double getScoreProjeto(@PathVariable Long projetoId,@RequestHeader("Authorization") String auth) {String token = auth.replace("Bearer ", "");
+        User usertoken = tokens.extrairClaims(token);
+        service.calcularMatchProjeto(usertoken.getId(), projetoId);
+        return repositoryMatch.findByUsuarioIdIdAndProjetoIdId(usertoken.getId(), projetoId).map(MatchResultadoDto::getScoreTotal).orElse(0.0);
+    }
 
 }
