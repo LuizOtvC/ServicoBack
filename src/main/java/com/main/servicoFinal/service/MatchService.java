@@ -135,8 +135,8 @@ public class MatchService {
     }
 
     public void calcularMatchProjeto(Long usuarioId, Long projetoId) {
-        User usuario = userRepository.getReferenceById(usuarioId);
-        ProjetoDto projeto = projetoRepository.getReferenceById(projetoId);
+        User usuario = userRepository.findById(usuarioId).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        ProjetoDto projeto = projetoRepository.findById(projetoId).orElseThrow(() -> new RuntimeException("Projeto não encontrado"));
 
         Set<ProjetoDto.DiaSemana> diasProjeto = projeto.getDiasTrabalho();
         Set<DiaSemana> diasUsuario = usuario.getDiasTrabalho();
@@ -167,7 +167,7 @@ public class MatchService {
                 + (scoreDias * 0.30)
                 + (scoreHistorico * 0.20)
                 + (scoreReputacao * 0.15);
-        
+
         Optional<MatchResultadoDto> existente = matchRepository.findByUsuarioIdIdAndProjetoIdId(usuarioId, projetoId);
 
         MatchResultadoDto match = existente.orElse(new MatchResultadoDto());
