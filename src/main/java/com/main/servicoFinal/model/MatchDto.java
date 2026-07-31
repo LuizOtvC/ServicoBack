@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
  */
 @Entity
 @Table(name = "match_resultado")
-public class MatchResultadoDto {
+public class MatchDto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

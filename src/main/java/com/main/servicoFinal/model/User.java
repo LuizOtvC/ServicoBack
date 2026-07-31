@@ -27,7 +27,7 @@ public class User {
     private String senha;
 
     @Column(nullable = false)
-    private Double reputacao = 5.0;
+    private Double reputacao = 10.0;
 
     @Column(name = "peso_servicos")
     private Double pesoServicos;
