@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,26 +25,39 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/mensagem")
 public class MensagemController {
+
     @Autowired
-    private MensagemService service; 
-    
+    private MensagemService service;
+
     @Autowired
     private TokenService tokens;
-    
+
     @GetMapping("/listar")
     public List<MensagemRespostaDto> listarMensagens(@RequestHeader("Authorization") String auth) {
-    String token = auth.replace("Bearer ", "");
-    User usertoken = tokens.extrairClaims(token);
-    return service.listarMensagens(usertoken.getId());
-}
-    
+        String token = auth.replace("Bearer ", "");
+        User usertoken = tokens.extrairClaims(token);
+        return service.listarMensagens(usertoken.getId());
+    }
+
     @DeleteMapping("/deletar/{id}")
-    public void apagarmensagem(@RequestHeader("Authorization") String auth, @PathVariable Long id){
+    public void apagarmensagem(@RequestHeader("Authorization") String auth, @PathVariable Long id) {
         String token = auth.replace("Bearer ", "");
         tokens.extrairClaims(token);
         service.deletarMensagem(id);
     }
-    
-    
-    
+
+    @PostMapping("/marcarLido")
+    public void marcarComoLido(@RequestHeader("Authorization") String auth) {
+        String token = auth.replace("Bearer ", "");
+        User usertoken = tokens.extrairClaims(token);
+        service.marcarComoLida(usertoken.getId());
+    }
+
+    @GetMapping("/naoLidas")
+    public Long contarNaoLidas(@RequestHeader("Authorization") String auth) {
+        String token = auth.replace("Bearer ", "");
+        User usertoken = tokens.extrairClaims(token);
+        return service.VerQuantasMensagensNaoLidas(usertoken.getId());
+    }
+
 }

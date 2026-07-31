@@ -47,6 +47,9 @@ public class MensagemDto {
     @Column(nullable = false, name = "enviado_em")
     private LocalDateTime enviadoEm;
 
+    @Column(nullable = false)
+    private Boolean lida = false;
+
     public enum Status {
         ACEITA, RECUSADA, CANCELADA, EM_ANDAMENTO, CONCLUIDO, CANCELADO, CRIADO, ENVIADA, PROPOSTA, ARQUIVADO
     }
@@ -97,6 +100,14 @@ public class MensagemDto {
 
     public void setEnviadoEm(LocalDateTime enviadoEm) {
         this.enviadoEm = enviadoEm;
+    }
+
+    public Boolean getLida() {
+        return lida;
+    }
+
+    public void setLida(Boolean lida) {
+        this.lida = lida;
     }
 
 }

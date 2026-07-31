@@ -148,7 +148,7 @@ public class MensagemService {
         mensagem.setEnviadoEm(LocalDateTime.now());
         mensagemRepository.save(mensagem);
     }
-    
+
     public void ProjetoArquivado(ProjetoDto projeto) {
         MensagemDto mensagem = new MensagemDto();
         mensagem.setUsuarioId(projeto.getUsuarioId());
@@ -182,7 +182,8 @@ public class MensagemService {
                     m.getProjetoId().getId(),
                     m.getMensagem(),
                     m.getStatus().name(),
-                    m.getEnviadoEm()
+                    m.getEnviadoEm(),
+                    m.getLida()
             ));
         }
         return resultado;
@@ -201,5 +202,17 @@ public class MensagemService {
         mensagem.setEnviadoEm(LocalDateTime.now());
         mensagemRepository.save(mensagem);
     }
+    
+    public void marcarComoLida(Long usuarioId) {
+    List<MensagemDto> mensagens = mensagemRepository.findByUsuarioIdIdAndLidaFalse(usuarioId);
+    for (MensagemDto m : mensagens) {
+        m.setLida(true);
+    }
+    mensagemRepository.saveAll(mensagens);
+}
+
+    public Long VerQuantasMensagensNaoLidas(Long id) {
+    return mensagemRepository.countByUsuarioIdIdAndLidaFalse(id);
+}
 
 }

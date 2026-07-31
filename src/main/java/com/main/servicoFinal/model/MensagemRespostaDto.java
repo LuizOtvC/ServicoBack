@@ -18,16 +18,22 @@ public class MensagemRespostaDto {
     private String mensagem;
     private String status;
     private LocalDateTime enviadoEm;
+    private Boolean lida;
 
-    public MensagemRespostaDto(Long id, String nomeProjeto, Long projetoId, String mensagem,
-            String status, LocalDateTime enviadoEm) {
+    public MensagemRespostaDto() {
+    }
+
+    public MensagemRespostaDto(Long id, String nomeProjeto, Long projetoId, String mensagem, String status, LocalDateTime enviadoEm, Boolean lida) {
         this.id = id;
         this.nomeProjeto = nomeProjeto;
         this.projetoId = projetoId;
         this.mensagem = mensagem;
         this.status = status;
         this.enviadoEm = enviadoEm;
+        this.lida = lida;
     }
+
+    
 
     public Long getId() {
         return id;
@@ -51,5 +57,13 @@ public class MensagemRespostaDto {
 
     public LocalDateTime getEnviadoEm() {
         return enviadoEm;
+    }
+
+    public Boolean getLida() {
+        return lida;
+    }
+
+    public void setLida(Boolean lida) {
+        this.lida = lida;
     }
 }

@@ -18,4 +18,8 @@ public interface MensagemRepository extends JpaRepository<MensagemDto, Long> {
 
     List<MensagemDto> findByUsuarioIdIdOrderByIdDesc(Long usuarioId);
 
+    public List<MensagemDto> findByUsuarioIdIdAndLidaFalse(Long usuarioId);
+
+    public Long countByUsuarioIdIdAndLidaFalse(Long id);
+
 }

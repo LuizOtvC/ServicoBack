@@ -95,40 +95,18 @@ public class UserService {
         User user = repository.getReferenceById(id);
 
         List<String> dias = user.getDiasTrabalho()
-                .stream()
-                .sorted(Comparator.comparingInt(d -> switch (d) {
-            case DOMINGO ->
-                1;
-            case SEGUNDA ->
-                2;
-            case TERCA ->
-                3;
-            case QUARTA ->
-                4;
-            case QUINTA ->
-                5;
-            case SEXTA ->
-                6;
-            case SABADO ->
-                7;
+        .stream()
+        .sorted(Comparator.comparingInt(d -> switch (d) {
+            case DOMINGO -> 1;
+            case SEGUNDA -> 2;
+            case TERCA -> 3;
+            case QUARTA -> 4;
+            case QUINTA -> 5;
+            case SEXTA -> 6;
+            case SABADO -> 7;
         }))
-                .map(d -> switch (d) {
-            case DOMINGO ->
-                "DOMINGO";
-            case SEGUNDA ->
-                "SEGUNDA";
-            case TERCA ->
-                "TERÇA";
-            case QUARTA ->
-                "QUARTA";
-            case QUINTA ->
-                "QUINTA";
-            case SEXTA ->
-                "SEXTA";
-            case SABADO ->
-                "SÁBADO";
-        })
-                .toList();
+        .map(Enum::name)
+        .toList();
 
         return new UserPerfil(
                 user.getNome(),

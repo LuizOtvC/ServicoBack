@@ -62,8 +62,13 @@ public class ProjetoService {
         if (quantidade >= 3) {
             throw new RuntimeException(
                     "Você já possui 3 projetos em aberto ou em andamento."
-            );
+            );           
         }
+        
+        if (projetoRepository.existsByUsuarioIdIdAndTituloIgnoreCase(usuarioId, dados.getTitulo())) {
+        throw new RuntimeException("Você já possui um projeto com esse título.");
+    }
+        
         ProjetoDto projeto = new ProjetoDto();
         projeto.setUsuarioId(user.getReferenceById(usuarioId));
         projeto.setTitulo(dados.getTitulo());
