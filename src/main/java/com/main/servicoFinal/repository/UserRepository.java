@@ -5,6 +5,8 @@
 package com.main.servicoFinal.repository;
 
 import com.main.servicoFinal.model.User;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -23,5 +25,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByTelefone(String telefone);
 
     boolean existsByTelefone(String telefone);
+
+    public List<User> findByUltimoLoginBeforeAndStatus(LocalDateTime limite, User.Status status);
 
 }

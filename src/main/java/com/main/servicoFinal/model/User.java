@@ -1,6 +1,7 @@
 package com.main.servicoFinal.model;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -45,16 +46,25 @@ public class User {
     private String descricao;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(
-            name = "usuario_dia_trabalho",
-            joinColumns = @JoinColumn(name = "usuario_id")
+    @CollectionTable(name = "usuario_dia_trabalho", joinColumns = @JoinColumn(name = "usuario_id")
     )
     @Enumerated(EnumType.STRING)
     @Column(name = "dia_semana")
     private Set<DiaSemana> diasTrabalho = new HashSet<>();
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Status status;
+
+    @Column(name = "ultimo_login", nullable = false)
+    private LocalDateTime ultimoLogin = LocalDateTime.now();
+
     public enum DiaSemana {
         DOMINGO, SEGUNDA, TERCA, QUARTA, QUINTA, SEXTA, SABADO
+    }
+
+    public enum Status {
+        ATIVO, INATIVO, ARQUIVADO
     }
 
     public User() {
@@ -156,4 +166,21 @@ public class User {
         this.diasTrabalho = diasTrabalho;
     }
 
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public LocalDateTime getUltimoLogin() {
+        return ultimoLogin;
+    }
+
+    public void setUltimoLogin(LocalDateTime ultimoLogin) {
+        this.ultimoLogin = ultimoLogin;
+    }
+
+    
 }

@@ -96,6 +96,7 @@ CREATE TABLE `mensagem` (
   `mensagem` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `status` enum('ACEITA','RECUSADA','CANCELADA','EM_ANDAMENTO','CONCLUIDO','CANCELADO','CRIADO','ENVIADA','PROPOSTA','ARQUIVADO') COLLATE utf8mb4_unicode_ci NOT NULL,
   `enviado_em` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `lida` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `projeto_id` (`projeto_id`),
   KEY `usuario_id` (`usuario_id`),
@@ -269,10 +270,12 @@ CREATE TABLE `usuario` (
   `peso_servicos` decimal(4,2) DEFAULT NULL,
   `peso_orcamento` decimal(4,2) DEFAULT NULL,
   `peso_historico` decimal(4,2) DEFAULT NULL,
+  `status` enum('ATIVO','INATIVO','ARQUIVADO') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'ATIVO',
+  `ultimo_login` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`),
   UNIQUE KEY `telefone` (`telefone`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -281,7 +284,7 @@ CREATE TABLE `usuario` (
 
 LOCK TABLES `usuario` WRITE;
 /*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
-INSERT INTO `usuario` VALUES (1,'João Silva',NULL,'joao@email.com','11999999999','12345',5.0,NULL,NULL,NULL);
+INSERT INTO `usuario` VALUES (1,'João Silva',NULL,'joao@email.com','11999999999','12345',5.0,NULL,NULL,NULL,'ATIVO','2026-08-01 02:14:28'),(2,'Carlos Oliveira',NULL,'carlos@email.com','11988887777','12345',5.0,NULL,NULL,NULL,'ATIVO','2026-05-20 13:00:00'),(3,'Maria José',NULL,'maria@email.com','11988888888','12345',1.5,NULL,NULL,NULL,'ATIVO','2026-05-20 13:00:00');
 /*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -345,4 +348,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-07-28 22:18:40
+-- Dump completed on 2026-07-31 23:16:54

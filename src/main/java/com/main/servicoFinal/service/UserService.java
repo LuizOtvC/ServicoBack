@@ -9,6 +9,7 @@ import com.main.servicoFinal.model.UserUpd;
 import com.main.servicoFinal.model.UserPerfil;
 import com.main.servicoFinal.model.UserRegistro;
 import com.main.servicoFinal.repository.UserRepository;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,9 @@ public class UserService {
 
     @Autowired
     private TokenService tokenrepository;
+    
+    @Autowired
+    private UserRepository userrepository;
 
     public String logar(String email, String senha) {
         User user = repository.findByEmail(email)
@@ -44,7 +48,16 @@ public class UserService {
                     "senha inválido"
             );
         }
-
+        user.setUltimoLogin(LocalDateTime.now());
+        if(user.getStatus() == User.Status.INATIVO){
+            user.setStatus(User.Status.ATIVO);
+        }else if(user.getStatus() == User.Status.ARQUIVADO){
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED,
+                    "Perfil Arquivado, por favor registre-se para continuar "
+            );
+        }
+        userrepository.save(user);
         return tokenrepository.gerarToken(user);
     }
 
@@ -73,6 +86,8 @@ public class UserService {
         user.setEmail(dados.getEmail());
         user.setSenha(dados.getSenha());
         user.setTelefone(dados.getTelefone());
+        user.setStatus(User.Status.ATIVO);
+        user.setUltimoLogin(LocalDateTime.now());
         repository.save(user);
         return tokenrepository.gerarToken(user);
     }
@@ -115,7 +130,8 @@ public class UserService {
                 user.getTelefone(),
                 user.getReputacao(),
                 user.getId(),
-                dias
+                dias,
+                user.getStatus().name()
         );
     }
 
