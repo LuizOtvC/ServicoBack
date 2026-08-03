@@ -46,8 +46,11 @@ public class PropostaService {
         }
         PropostaDto proposta = new PropostaDto();
         proposta.setUsuario(userRepository.getReferenceById(usuarioId));
-        proposta.setProjeto(projetoRepository.getReferenceById(projetoId));
+        proposta.setProjeto(projetoRepository.getReferenceById(projetoId));       
         proposta.setValorProposto(valorProposto);
+        if (proposta.getValorProposto() == null) {
+    proposta.setValorProposto(0.0);
+}
         proposta.setDescricao(descricao);
         proposta.setStatus(PropostaDto.Status.PENDENTE);
         proposta.setEnviadoEm(LocalDateTime.now());

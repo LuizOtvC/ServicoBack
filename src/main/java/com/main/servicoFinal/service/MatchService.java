@@ -88,9 +88,18 @@ public class MatchService {
         }
     }
     double scoreSkills = totalServicos > 0 ? pontuacao / totalServicos : 0.0;
+    double scoreOrcamento;
+
+if (projeto.getOrcamento() == 0) {
+    scoreOrcamento = 1.0;
+} else {
     double orcamentoProjeto = projeto.getOrcamento();
     double proporcao = valorProposto / orcamentoProjeto;
-    double scoreOrcamento;
+    
+    if (valorProposto == null) {
+    valorProposto = 0.0;
+}
+
     if (proporcao < 0.5) {
         scoreOrcamento = proporcao * 0.5;
     } else if (proporcao <= 1.0) {
@@ -98,6 +107,7 @@ public class MatchService {
     } else {
         scoreOrcamento = orcamentoProjeto / valorProposto;
     }
+}
     long projetosConcluidos = propostaRepository.countByUsuarioIdAndProjetoStatus(usuarioId, ProjetoDto.Status.CONCLUIDO);
     double scoreHistorico = Math.min(projetosConcluidos / 10.0, 1.0);
     double scoreTotal
