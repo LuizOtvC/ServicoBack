@@ -71,7 +71,7 @@ public class UserService {
         if (dados.getSenha() == null || dados.getSenha().equals("") || !senhaValida(dados.getSenha())) {
             throw new ResponseStatusException(HttpStatusCode.valueOf(400), "Preencha a senha corretamente, A senha deve ter no mínimo 6 caracteres, uma letra maiúscula e um caractere especial");
         }
-        if (dados.getTelefone() == null || dados.getTelefone().equals("")) {
+        if (dados.getTelefone() == null || dados.getTelefone().equals("") || !dados.getTelefone().matches("(\\d{11}|\\(\\d{2}\\)\\s?\\d{4,5}-\\d{4})")) {
             throw new ResponseStatusException(HttpStatusCode.valueOf(400), "preencha o telefone corretamente");
         }
         if (repository.existsByEmail(dados.getEmail())) {
@@ -99,6 +99,9 @@ public class UserService {
 
     public void atualizarPerfil(Long id, UserUpd dados) {
         User user = repository.getReferenceById(id);
+        if(dados.getTelefone().startsWith("-") || !dados.getTelefone().matches("(\\d{11}|\\(\\d{2}\\)\\s?\\d{4,5}-\\d{4})")){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "preencha o telefone corretamente");
+        }       
         user.setNome(dados.getNome());
         user.setDiasTrabalho(dados.getDiasTrabalho());
         user.setDescricao(dados.getDescricao());

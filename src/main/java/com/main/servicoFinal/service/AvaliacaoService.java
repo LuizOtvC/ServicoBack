@@ -45,7 +45,7 @@ public class AvaliacaoService {
         }
 
         PropostaDto propostaAceita = propostaRepository
-                .findByProjetoIdAndStatus(projetoId, PropostaDto.Status.ACEITA)
+                .findByProjetoIdAndStatus(projetoId, PropostaDto.Status.CONCLUIDA)
                 .orElseThrow(() -> new RuntimeException("Nenhum profissional selecionado para este projeto."));
 
         Long donoId = projeto.getUsuarioId().getId();
