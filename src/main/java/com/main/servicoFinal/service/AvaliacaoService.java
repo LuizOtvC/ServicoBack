@@ -33,8 +33,8 @@ public class AvaliacaoService {
     private UserRepository userRepository;
 
     public void avaliar(Long avaliadorId, Long projetoId, Double nota, String comentario) {
-        if (nota == null || nota < 0 || nota > 5) {
-            throw new RuntimeException("A nota deve estar entre 0 e 5.");
+        if (nota == null || nota < 1 || nota > 5) {
+            throw new RuntimeException("A nota deve estar entre 1 e 5.");
         }
 
         ProjetoDto projeto = projetoRepository.findById(projetoId)
