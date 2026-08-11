@@ -13,4 +13,6 @@ public interface UsuarioServicoRepository extends JpaRepository<UsuarioServicoDt
 
     public void deleteById(UsuarioServicoId idAntigo);
 
+    public boolean existsByUsuario_IdAndServico_Id(Long usuarioId, Long servicoId);
+
 }

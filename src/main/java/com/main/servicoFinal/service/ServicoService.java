@@ -37,6 +37,13 @@ public class ServicoService {
 
         ServicoDto servico = serviceRepository.findById(servicoId)
                 .orElseThrow(() -> new RuntimeException("Serviço não encontrado"));
+        
+        if (servcicouser.existsByUsuario_IdAndServico_Id(usuarioId, servicoId)) {
+        throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "Você já possui essa habilidade no perfil."
+        );
+    }else{
 
         UsuarioServicoDto usuarioServico = new UsuarioServicoDto();
         usuarioServico.setUsuario(user);
@@ -44,6 +51,7 @@ public class ServicoService {
         usuarioServico.setNivel(nivel);
 
         servcicouser.save(usuarioServico);
+        }
     }
 
     public List<ServicoDto> listarTodosServicos() {
