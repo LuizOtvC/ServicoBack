@@ -140,7 +140,8 @@ public class ProjetoService {
                 null
         );
 
-        Optional<PropostaDto> propostaAceitaOpt = propostaRepository.findByProjeto_IdAndStatus(id, PropostaDto.Status.ACEITA);
+        Optional<PropostaDto> propostaAceitaOpt = propostaRepository
+        .findByProjeto_IdAndStatusIn(id, List.of(PropostaDto.Status.ACEITA, PropostaDto.Status.CONCLUIDA));
 
         if (propostaAceitaOpt.isPresent()) {
             PropostaDto prop = propostaAceitaOpt.get();

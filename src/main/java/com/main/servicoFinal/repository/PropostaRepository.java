@@ -44,6 +44,8 @@ public interface PropostaRepository extends JpaRepository<PropostaDto, Long> {
 
     public long countByUsuarioIdAndProjetoStatus(Long usuarioId, ProjetoDto.Status status);
 
+    public Optional<PropostaDto> findByProjeto_IdAndStatusIn(Long id, List<PropostaDto.Status> of);
+
     
 
 }

@@ -59,73 +59,73 @@ public class MatchService {
     private PropostaRepository propostaRepository;
 
     public void calcularMatch(Long usuarioId, Long projetoId, Double valorProposto) {
-    User usuario = userRepository.getReferenceById(usuarioId);
-    ProjetoDto projeto = projetoRepository.getReferenceById(projetoId);
-    Set<ProjetoDto.DiaSemana> diasProjeto = projeto.getDiasTrabalho();
-    Set<DiaSemana> diasUsuario = usuario.getDiasTrabalho();
-    double scoreDias;
-    if (diasProjeto.isEmpty()) {
-        scoreDias = 1.0;
-    } else {
-        long diasEmComum = diasProjeto.stream()
-                .filter(diasUsuario::contains)
-                .count();
-        if (diasEmComum == 0) {
-            scoreDias = 0.0;
+        User usuario = userRepository.getReferenceById(usuarioId);
+        ProjetoDto projeto = projetoRepository.getReferenceById(projetoId);
+        Set<ProjetoDto.DiaSemana> diasProjeto = projeto.getDiasTrabalho();
+        Set<DiaSemana> diasUsuario = usuario.getDiasTrabalho();
+        double scoreDias;
+        if (diasProjeto.isEmpty()) {
+            scoreDias = 1.0;
         } else {
-            scoreDias = (double) diasEmComum / diasProjeto.size();
-        }
-    }
-    List<ProjetoServicoDto> servicosProjeto = projetoServicoRepository.findByProjetoId(projetoId);
-    List<UsuarioServicoDto> servicosUsuario = usuarioServicoRepository.findByUsuarioId(usuarioId);
-    double totalServicos = servicosProjeto.size();
-    double pontuacao = 0.0;
-    for (ProjetoServicoDto ps : servicosProjeto) {
-        for (UsuarioServicoDto us : servicosUsuario) {
-            if (us.getServico().getId().equals(ps.getServico().getId())) {
-                pontuacao += pesoNivel(us.getNivel());
+            long diasEmComum = diasProjeto.stream()
+                    .filter(diasUsuario::contains)
+                    .count();
+            if (diasEmComum == 0) {
+                scoreDias = 0.0;
+            } else {
+                scoreDias = (double) diasEmComum / diasProjeto.size();
             }
         }
+        List<ProjetoServicoDto> servicosProjeto = projetoServicoRepository.findByProjetoId(projetoId);
+        List<UsuarioServicoDto> servicosUsuario = usuarioServicoRepository.findByUsuarioId(usuarioId);
+        double totalServicos = servicosProjeto.size();
+        double pontuacao = 0.0;
+        for (ProjetoServicoDto ps : servicosProjeto) {
+            for (UsuarioServicoDto us : servicosUsuario) {
+                if (us.getServico().getId().equals(ps.getServico().getId())) {
+                    pontuacao += pesoNivel(us.getNivel());
+                }
+            }
+        }
+        double scoreSkills = totalServicos > 0 ? pontuacao / totalServicos : 0.0;
+        double scoreOrcamento;
+
+        if (projeto.getOrcamento() == 0) {
+            scoreOrcamento = 1.0;
+        } else {
+            double orcamentoProjeto = projeto.getOrcamento();
+            double proporcao = valorProposto / orcamentoProjeto;
+
+            if (valorProposto == null) {
+                valorProposto = 0.0;
+            }
+
+            if (proporcao < 0.5) {
+                scoreOrcamento = proporcao * 0.5;
+            } else if (proporcao <= 1.0) {
+                scoreOrcamento = 1.0;
+            } else {
+                scoreOrcamento = orcamentoProjeto / valorProposto;
+            }
+        }
+        long projetosConcluidos = propostaRepository.countByUsuarioIdAndProjetoStatus(usuarioId, ProjetoDto.Status.CONCLUIDO);
+        double scoreHistorico = Math.min(projetosConcluidos / 10.0, 1.0);
+        double scoreTotal
+                = (scoreSkills * 0.38)
+                + (scoreOrcamento * 0.25)
+                + (scoreHistorico * 0.02) // ← virou bônus pequeno
+                + (usuario.getReputacao() / 5.0 * 0.10)
+                + (scoreDias * 0.25);
+
+        MatchDto match = matchRepository.findByUsuarioIdIdAndProjetoIdId(usuarioId, projetoId).orElse(new MatchDto());
+        match.setUsuarioId(usuario);
+        match.setProjetoId(projeto);
+        match.setScoreTotal(scoreTotal);
+        match.setScoreServico(scoreSkills);
+        match.setScoreOrcamento(scoreOrcamento);
+        match.setScoreHistorico(scoreHistorico);
+        matchRepository.save(match);
     }
-    double scoreSkills = totalServicos > 0 ? pontuacao / totalServicos : 0.0;
-    double scoreOrcamento;
-
-if (projeto.getOrcamento() == 0) {
-    scoreOrcamento = 1.0;
-} else {
-    double orcamentoProjeto = projeto.getOrcamento();
-    double proporcao = valorProposto / orcamentoProjeto;
-    
-    if (valorProposto == null) {
-    valorProposto = 0.0;
-}
-
-    if (proporcao < 0.5) {
-        scoreOrcamento = proporcao * 0.5;
-    } else if (proporcao <= 1.0) {
-        scoreOrcamento = 1.0;
-    } else {
-        scoreOrcamento = orcamentoProjeto / valorProposto;
-    }
-}
-    long projetosConcluidos = propostaRepository.countByUsuarioIdAndProjetoStatus(usuarioId, ProjetoDto.Status.CONCLUIDO);
-    double scoreHistorico = Math.min(projetosConcluidos / 10.0, 1.0);
-    double scoreTotal
-        = (scoreSkills * 0.33)
-        + (scoreOrcamento * 0.22)
-        + (scoreHistorico * 0.05)
-        + (usuario.getReputacao() / 5.0 * 0.12)
-        + (scoreDias * 0.28);
-
-    MatchDto match = matchRepository.findByUsuarioIdIdAndProjetoIdId(usuarioId, projetoId).orElse(new MatchDto());
-    match.setUsuarioId(usuario);
-    match.setProjetoId(projeto);
-    match.setScoreTotal(scoreTotal);
-    match.setScoreServico(scoreSkills);
-    match.setScoreOrcamento(scoreOrcamento);
-    match.setScoreHistorico(scoreHistorico);
-    matchRepository.save(match);
-}
 
     public void calcularMatchProjeto(Long usuarioId, Long projetoId) {
         User usuario = userRepository.findById(usuarioId).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
