@@ -88,7 +88,7 @@ public class AvaliacaoService {
 
         User user = userRepository.getReferenceById(usuarioId);
         user.setReputacao(media);
-        if (media < 2.0) {
+        if (media < 1.0) {
         user.setStatus(User.Status.ARQUIVADO);
     } 
         userRepository.save(user);

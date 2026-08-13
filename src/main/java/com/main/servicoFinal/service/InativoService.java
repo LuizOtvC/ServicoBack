@@ -33,7 +33,7 @@ public class InativoService {
         LocalDateTime limite = LocalDateTime.now().minusDays(30);
         List<User> inativos = userRepository.findByUltimoLoginBeforeAndStatus(limite, User.Status.ATIVO);
         for (User u : inativos) {
-            if (u.getReputacao() < 2.0) {
+            if (u.getReputacao() < 1.0) {
                 u.setStatus(User.Status.ARQUIVADO);
             } else {
                 u.setStatus(User.Status.INATIVO);
