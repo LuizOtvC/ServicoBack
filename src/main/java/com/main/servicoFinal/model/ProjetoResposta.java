@@ -16,11 +16,12 @@ public class ProjetoResposta {
     private LocalDateTime criadoEm;
     private List<String> diasTrabalho;
     private PropostaRespostaDto propostaAceita;
+    private String cidade;
 
     public ProjetoResposta() {
     }
 
-    public ProjetoResposta(Long id, String titulo, String descricao, Double orcamento, String status, List<String> servicos, Long usuarioId, Integer scoreRisco, LocalDateTime criadoEm, List<String> diasTrabalho, PropostaRespostaDto propostaAceita) {
+    public ProjetoResposta(Long id, String titulo, String descricao, Double orcamento, String status, List<String> servicos, Long usuarioId, Integer scoreRisco, LocalDateTime criadoEm, List<String> diasTrabalho, PropostaRespostaDto propostaAceita, String cidade) {
         this.id = id;
         this.titulo = titulo;
         this.descricao = descricao;
@@ -32,7 +33,10 @@ public class ProjetoResposta {
         this.criadoEm = criadoEm;
         this.diasTrabalho = diasTrabalho;
         this.propostaAceita = propostaAceita;
+        this.cidade = cidade;
     }
+
+    
 
     public Long getId() {
         return id;
@@ -122,4 +126,13 @@ public class ProjetoResposta {
         this.propostaAceita = propostaAceita;
     }
 
+    public String getCidade() {
+        return cidade;
+    }
+
+    public void setCidade(String cidade) {
+        this.cidade = cidade;
+    }
+
+    
 }

@@ -13,11 +13,12 @@ public class UserPerfil {
     private Long id;
     private List<String> diasTrabalho;
     private String status;
+    private String cidade;
 
     public UserPerfil() {
     }
 
-    public UserPerfil(String nome, String descricao, String email, String telefone, Double reputacao, Long id, List<String> diasTrabalho, String status) {
+    public UserPerfil(String nome, String descricao, String email, String telefone, Double reputacao, Long id, List<String> diasTrabalho, String status, String cidade) {
         this.nome = nome;
         this.descricao = descricao;
         this.email = email;
@@ -26,7 +27,10 @@ public class UserPerfil {
         this.id = id;
         this.diasTrabalho = diasTrabalho;
         this.status = status;
+        this.cidade = cidade;
     }
+
+    
 
     
 
@@ -93,6 +97,16 @@ public class UserPerfil {
     public void setStatus(String status) {
         this.status = status;
     }
+
+    public String getCidade() {
+        return cidade;
+    }
+
+    public void setCidade(String cidade) {
+        this.cidade = cidade;
+    }
+    
+    
     
     
 

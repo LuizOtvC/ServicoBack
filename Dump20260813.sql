@@ -1,10 +1,10 @@
-CREATE DATABASE  IF NOT EXISTS `servicofinal` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+CREATE DATABASE  IF NOT EXISTS `servicofinal` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci */;
 USE `servicofinal`;
--- MySQL dump 10.13  Distrib 8.0.45, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.43, for Win64 (x86_64)
 --
--- Host: localhost    Database: servicofinal
+-- Host: 127.0.0.1    Database: servicofinal
 -- ------------------------------------------------------
--- Server version	8.0.45
+-- Server version	5.5.5-10.4.32-MariaDB
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -25,12 +25,12 @@ DROP TABLE IF EXISTS `avaliacao`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `avaliacao` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `projeto_id` bigint NOT NULL,
-  `avaliador_id` bigint NOT NULL,
-  `avaliado_id` bigint NOT NULL,
-  `nota` decimal(3,1) NOT NULL,
-  `comentario` text COLLATE utf8mb4_unicode_ci,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `projeto_id` bigint(20) NOT NULL,
+  `avaliador_id` bigint(20) NOT NULL,
+  `avaliado_id` bigint(20) NOT NULL,
+  `nota` double NOT NULL,
+  `comentario` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_avaliacao` (`projeto_id`,`avaliador_id`,`avaliado_id`),
   KEY `fk_avaliacao_avaliador` (`avaliador_id`),
@@ -58,19 +58,19 @@ DROP TABLE IF EXISTS `match_resultado`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `match_resultado` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `usuario_id` bigint NOT NULL,
-  `projeto_id` bigint NOT NULL,
-  `score_total` decimal(5,2) NOT NULL,
-  `score_servicos` decimal(5,2) NOT NULL,
-  `score_orcamento` decimal(5,2) NOT NULL,
-  `score_historico` decimal(5,2) NOT NULL,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `usuario_id` bigint(20) NOT NULL,
+  `projeto_id` bigint(20) NOT NULL,
+  `score_total` double NOT NULL,
+  `score_servicos` double NOT NULL,
+  `score_orcamento` double NOT NULL,
+  `score_historico` double NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_match` (`usuario_id`,`projeto_id`),
   KEY `fk_match_projeto` (`projeto_id`),
   CONSTRAINT `fk_match_projeto` FOREIGN KEY (`projeto_id`) REFERENCES `projeto` (`id`) ON DELETE CASCADE,
   CONSTRAINT `fk_match_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -90,19 +90,19 @@ DROP TABLE IF EXISTS `mensagem`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `mensagem` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `usuario_id` bigint NOT NULL,
-  `projeto_id` bigint NOT NULL,
-  `mensagem` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `status` enum('ACEITA','RECUSADA','CANCELADA','EM_ANDAMENTO','CONCLUIDO','CANCELADO','CRIADO','ENVIADA','PROPOSTA','ARQUIVADO') COLLATE utf8mb4_unicode_ci NOT NULL,
-  `enviado_em` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `lida` tinyint(1) NOT NULL DEFAULT '0',
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `usuario_id` bigint(20) NOT NULL,
+  `projeto_id` bigint(20) NOT NULL,
+  `mensagem` varchar(200) NOT NULL,
+  `status` enum('ACEITA','RECUSADA','CANCELADA','EM_ANDAMENTO','CONCLUIDO','CANCELADO','CRIADO','ENVIADA','PROPOSTA','ARQUIVADO') NOT NULL,
+  `enviado_em` timestamp NOT NULL DEFAULT current_timestamp(),
+  `lida` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `projeto_id` (`projeto_id`),
   KEY `usuario_id` (`usuario_id`),
   CONSTRAINT `mensagem_ibfk_1` FOREIGN KEY (`projeto_id`) REFERENCES `projeto` (`id`) ON DELETE CASCADE,
   CONSTRAINT `mensagem_ibfk_2` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=53 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -115,6 +115,28 @@ LOCK TABLES `mensagem` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `mensagem_seq`
+--
+
+DROP TABLE IF EXISTS `mensagem_seq`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `mensagem_seq` (
+  `next_val` bigint(20) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `mensagem_seq`
+--
+
+LOCK TABLES `mensagem_seq` WRITE;
+/*!40000 ALTER TABLE `mensagem_seq` DISABLE KEYS */;
+INSERT INTO `mensagem_seq` VALUES (151);
+/*!40000 ALTER TABLE `mensagem_seq` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `projeto`
 --
 
@@ -122,18 +144,19 @@ DROP TABLE IF EXISTS `projeto`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `projeto` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `usuario_id` bigint NOT NULL,
-  `titulo` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `descricao` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `orcamento` decimal(12,2) NOT NULL,
-  `status` enum('ABERTO','EM_ANDAMENTO','CONCLUIDO','CANCELADO','ARQUIVADO') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'ABERTO',
-  `score_risco` int NOT NULL DEFAULT '0',
-  `criado_em` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `usuario_id` bigint(20) NOT NULL,
+  `titulo` varchar(200) NOT NULL,
+  `descricao` varchar(255) NOT NULL,
+  `orcamento` double NOT NULL,
+  `status` enum('ABERTO','EM_ANDAMENTO','CONCLUIDO','CANCELADO','ARQUIVADO') NOT NULL DEFAULT 'ABERTO',
+  `score_risco` int(11) NOT NULL DEFAULT 0,
+  `criado_em` timestamp NOT NULL DEFAULT current_timestamp(),
+  `cidade` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_projeto_usuario` (`usuario_id`),
   CONSTRAINT `fk_projeto_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=53 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -153,9 +176,10 @@ DROP TABLE IF EXISTS `projeto_dia_trabalho`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `projeto_dia_trabalho` (
-  `projeto_id` bigint NOT NULL,
-  `dia_semana` enum('DOMINGO','SEGUNDA','TERCA','QUARTA','QUINTA','SEXTA','SABADO') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `projeto_id` bigint(20) NOT NULL,
+  `dia_semana` enum('DOMINGO','SEGUNDA','TERCA','QUARTA','QUINTA','SEXTA','SABADO') NOT NULL,
   PRIMARY KEY (`projeto_id`,`dia_semana`),
+  UNIQUE KEY `UK2bph03pp6ubhx50nisi8sbgih` (`projeto_id`,`dia_semana`),
   CONSTRAINT `fk_projeto_dia` FOREIGN KEY (`projeto_id`) REFERENCES `projeto` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -170,6 +194,28 @@ LOCK TABLES `projeto_dia_trabalho` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `projeto_seq`
+--
+
+DROP TABLE IF EXISTS `projeto_seq`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `projeto_seq` (
+  `next_val` bigint(20) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `projeto_seq`
+--
+
+LOCK TABLES `projeto_seq` WRITE;
+/*!40000 ALTER TABLE `projeto_seq` DISABLE KEYS */;
+INSERT INTO `projeto_seq` VALUES (151);
+/*!40000 ALTER TABLE `projeto_seq` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `projeto_servico`
 --
 
@@ -177,8 +223,8 @@ DROP TABLE IF EXISTS `projeto_servico`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `projeto_servico` (
-  `projeto_id` bigint NOT NULL,
-  `servico_id` bigint NOT NULL,
+  `projeto_id` bigint(20) NOT NULL,
+  `servico_id` bigint(20) NOT NULL,
   PRIMARY KEY (`projeto_id`,`servico_id`),
   KEY `servico_id` (`servico_id`),
   CONSTRAINT `projeto_servico_ibfk_1` FOREIGN KEY (`projeto_id`) REFERENCES `projeto` (`id`) ON DELETE CASCADE,
@@ -203,13 +249,13 @@ DROP TABLE IF EXISTS `proposta`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `proposta` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `usuario_id` bigint NOT NULL,
-  `projeto_id` bigint NOT NULL,
-  `valor_proposto` decimal(12,2) NOT NULL,
-  `descricao` varchar(500) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `status` enum('PENDENTE','ACEITA','RECUSADA','CANCELADA','CONCLUIDA') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'PENDENTE',
-  `enviado_em` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `usuario_id` bigint(20) NOT NULL,
+  `projeto_id` bigint(20) NOT NULL,
+  `valor_proposto` double NOT NULL,
+  `descricao` varchar(255) NOT NULL,
+  `status` enum('PENDENTE','ACEITA','RECUSADA','CANCELADA','CONCLUIDA') NOT NULL DEFAULT 'PENDENTE',
+  `enviado_em` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `fk_proposta_usuario` (`usuario_id`),
   KEY `fk_proposta_projeto` (`projeto_id`),
@@ -235,8 +281,8 @@ DROP TABLE IF EXISTS `servico`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `servico` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `nome` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `nome` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `nome` (`nome`)
 ) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -253,6 +299,28 @@ INSERT INTO `servico` VALUES (8,'Azulejista'),(11,'Diarista'),(1,'Eletricista'),
 UNLOCK TABLES;
 
 --
+-- Table structure for table `servico_seq`
+--
+
+DROP TABLE IF EXISTS `servico_seq`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `servico_seq` (
+  `next_val` bigint(20) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `servico_seq`
+--
+
+LOCK TABLES `servico_seq` WRITE;
+/*!40000 ALTER TABLE `servico_seq` DISABLE KEYS */;
+INSERT INTO `servico_seq` VALUES (1);
+/*!40000 ALTER TABLE `servico_seq` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `usuario`
 --
 
@@ -260,18 +328,19 @@ DROP TABLE IF EXISTS `usuario`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `usuario` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `nome` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `descricao` varchar(1000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `email` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `telefone` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `senha` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `reputacao` decimal(3,1) NOT NULL DEFAULT '5.0',
-  `peso_servicos` decimal(4,2) DEFAULT NULL,
-  `peso_orcamento` decimal(4,2) DEFAULT NULL,
-  `peso_historico` decimal(4,2) DEFAULT NULL,
-  `status` enum('ATIVO','INATIVO','ARQUIVADO') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'ATIVO',
-  `ultimo_login` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `nome` varchar(100) NOT NULL,
+  `descricao` varchar(1000) DEFAULT NULL,
+  `email` varchar(150) NOT NULL,
+  `telefone` varchar(150) NOT NULL,
+  `senha` varchar(255) NOT NULL,
+  `reputacao` double NOT NULL,
+  `peso_servicos` double DEFAULT NULL,
+  `peso_orcamento` double DEFAULT NULL,
+  `peso_historico` double DEFAULT NULL,
+  `status` enum('ATIVO','INATIVO','ARQUIVADO') NOT NULL DEFAULT 'ATIVO',
+  `ultimo_login` timestamp NOT NULL DEFAULT current_timestamp(),
+  `cidade` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`),
   UNIQUE KEY `telefone` (`telefone`)
@@ -284,7 +353,7 @@ CREATE TABLE `usuario` (
 
 LOCK TABLES `usuario` WRITE;
 /*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
-INSERT INTO `usuario` VALUES (1,'João Silva',NULL,'joao@email.com','11999999999','12345',5.0,NULL,NULL,NULL,'ATIVO','2026-08-01 02:14:28'),(2,'Carlos Oliveira',NULL,'carlos@email.com','11988887777','12345',5.0,NULL,NULL,NULL,'ATIVO','2026-05-20 13:00:00'),(3,'Maria José',NULL,'maria@email.com','11988888888','12345',1.5,NULL,NULL,NULL,'ATIVO','2026-05-20 13:00:00');
+INSERT INTO `usuario` VALUES (1,'João Silva','Gosto de sempre estar fazendo algo','joao@email.com','11999999999','12345',5,NULL,NULL,NULL,'ATIVO','2026-08-13 17:43:30','Londrina'),(2,'Carlos Oliveira',NULL,'carlos@email.com','11988887777','12345',5,NULL,NULL,NULL,'ATIVO','2026-08-12 20:10:16',NULL),(3,'Maria José',NULL,'maria@email.com','11988888888','12345',1.5,NULL,NULL,NULL,'ARQUIVADO','2026-05-20 13:00:00',NULL);
 /*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -296,9 +365,10 @@ DROP TABLE IF EXISTS `usuario_dia_trabalho`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `usuario_dia_trabalho` (
-  `usuario_id` bigint NOT NULL,
-  `dia_semana` enum('DOMINGO','SEGUNDA','TERCA','QUARTA','QUINTA','SEXTA','SABADO') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `usuario_id` bigint(20) NOT NULL,
+  `dia_semana` enum('DOMINGO','SEGUNDA','TERCA','QUARTA','QUINTA','SEXTA','SABADO') NOT NULL,
   PRIMARY KEY (`usuario_id`,`dia_semana`),
+  UNIQUE KEY `UKoa71kfmxq5jo6nh6b3gqsgrpd` (`usuario_id`,`dia_semana`),
   CONSTRAINT `usuario_dia_trabalho_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -320,9 +390,9 @@ DROP TABLE IF EXISTS `usuario_servico`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `usuario_servico` (
-  `usuario_id` bigint NOT NULL,
-  `servico_id` bigint NOT NULL,
-  `nivel` enum('BASICO','INTERMEDIARIO','AVANCADO') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `usuario_id` bigint(20) NOT NULL,
+  `servico_id` bigint(20) NOT NULL,
+  `nivel` enum('BASICO','INTERMEDIARIO','AVANCADO') NOT NULL,
   PRIMARY KEY (`usuario_id`,`servico_id`),
   KEY `servico_id` (`servico_id`),
   CONSTRAINT `usuario_servico_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`) ON DELETE CASCADE,
@@ -348,4 +418,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-07-31 23:16:54
+-- Dump completed on 2026-08-13 15:19:56

@@ -64,6 +64,9 @@ public class ProjetoDto {
     @Enumerated(EnumType.STRING)
     @Column(name = "dia_semana")
     private Set<DiaSemana> diasTrabalho = new HashSet<>();
+    
+    @Column(nullable = true)
+    private String cidade;
 
     public enum Status {
         ABERTO, EM_ANDAMENTO, CONCLUIDO, CANCELADO, ARQUIVADO
@@ -164,5 +167,15 @@ public class ProjetoDto {
     public void setDiasTrabalho(Set<DiaSemana> diasTrabalho) {
         this.diasTrabalho = diasTrabalho;
     }
+
+    public String getCidade() {
+        return cidade;
+    }
+
+    public void setCidade(String cidade) {
+        this.cidade = cidade;
+    }
+    
+    
 
 }

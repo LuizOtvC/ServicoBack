@@ -79,6 +79,7 @@ public class ProjetoService {
         projeto.setStatus(ProjetoDto.Status.ABERTO);
         projeto.setScoreRisco(0);
         projeto.setDiasTrabalho(dados.getDiasTrabalho());
+        projeto.setCidade(dados.getCidade());
         projetoRepository.save(projeto);
         mensagemService.ProjetoCriado(projeto);
 
@@ -108,7 +109,7 @@ public class ProjetoService {
                 servicos.add(s.getServico().getNome());
             }
             List<String> dias = p.getDiasTrabalho().stream().map(Enum::name).toList();
-            resultado.add(new ProjetoResposta(p.getId(), p.getTitulo(), p.getDescricao(), p.getOrcamento(), p.getStatus().name(), servicos, p.getUsuarioId().getId(), p.getScoreRisco(), p.getCriadoEm(), dias, null));
+            resultado.add(new ProjetoResposta(p.getId(), p.getTitulo(), p.getDescricao(), p.getOrcamento(), p.getStatus().name(), servicos, p.getUsuarioId().getId(), p.getScoreRisco(), p.getCriadoEm(), dias, null, p.getCidade()));
         }
         return resultado;
     }
@@ -137,7 +138,8 @@ public class ProjetoService {
                 p.getScoreRisco(),
                 p.getCriadoEm(),
                 dias,
-                null
+                null,
+                p.getCidade()
         );
 
         Optional<PropostaDto> propostaAceitaOpt = propostaRepository
@@ -188,7 +190,8 @@ public class ProjetoService {
                     p.getScoreRisco(),
                     p.getCriadoEm(),
                     dias,
-                    null
+                    null,
+                    p.getCidade()
             ));
         }
         return resultado;

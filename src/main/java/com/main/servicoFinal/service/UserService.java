@@ -106,6 +106,7 @@ public class UserService {
         user.setDiasTrabalho(dados.getDiasTrabalho());
         user.setDescricao(dados.getDescricao());
         user.setTelefone(dados.getTelefone());
+        user.setCidade(dados.getCidade());
         repository.save(user);
     }
 
@@ -134,7 +135,8 @@ public class UserService {
                 user.getReputacao(),
                 user.getId(),
                 dias,
-                user.getStatus().name()
+                user.getStatus().name(),
+                user.getCidade()
         );
     }
 

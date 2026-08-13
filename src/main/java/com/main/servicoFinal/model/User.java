@@ -58,6 +58,9 @@ public class User {
 
     @Column(name = "ultimo_login", nullable = false)
     private LocalDateTime ultimoLogin = LocalDateTime.now();
+    
+    @Column(nullable = true)
+    private String cidade;
 
     public enum DiaSemana {
         DOMINGO, SEGUNDA, TERCA, QUARTA, QUINTA, SEXTA, SABADO
@@ -181,6 +184,16 @@ public class User {
     public void setUltimoLogin(LocalDateTime ultimoLogin) {
         this.ultimoLogin = ultimoLogin;
     }
+
+    public String getCidade() {
+        return cidade;
+    }
+
+    public void setCidade(String cidade) {
+        this.cidade = cidade;
+    }
+    
+    
 
     
 }

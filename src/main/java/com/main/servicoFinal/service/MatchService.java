@@ -110,12 +110,18 @@ public class MatchService {
         }
         long projetosConcluidos = propostaRepository.countByUsuarioIdAndProjetoStatus(usuarioId, ProjetoDto.Status.CONCLUIDO);
         double scoreHistorico = Math.min(projetosConcluidos / 10.0, 1.0);
+        double scoreCidade; 
+        if (projeto.getCidade() == null || projeto.getCidade().isBlank()) {scoreCidade = 1.0;
+} else {
+    scoreCidade = projeto.getCidade().equalsIgnoreCase(usuario.getCidade()) ? 1.0 : 0.0;
+}
         double scoreTotal
-                = (scoreSkills * 0.38)
-                + (scoreOrcamento * 0.25)
-                + (scoreHistorico * 0.02) // ← virou bônus pequeno
-                + (usuario.getReputacao() / 5.0 * 0.10)
-                + (scoreDias * 0.25);
+        = (scoreSkills * 0.35)
+        + (scoreOrcamento * 0.20)
+        + (scoreHistorico * 0.05)
+        + (usuario.getReputacao() / 5.0 * 0.10)
+        + (scoreDias * 0.20)
+        + (scoreCidade * 0.10);
 
         MatchDto match = matchRepository.findByUsuarioIdIdAndProjetoIdId(usuarioId, projetoId).orElse(new MatchDto());
         match.setUsuarioId(usuario);
@@ -155,11 +161,17 @@ public class MatchService {
         double scoreHistorico = Math.min(projetosConcluidos / 10.0, 1.0);
 
         double scoreReputacao = usuario.getReputacao() / 5.0;
+        double scoreCidade;
+if (projeto.getCidade() == null || projeto.getCidade().isBlank()) {scoreCidade = 1.0;
+} else {
+    scoreCidade = projeto.getCidade().equalsIgnoreCase(usuario.getCidade()) ? 1.0 : 0.0;
+}
 
-        double scoreTotal = (scoreSkills * 0.35)
-                + (scoreDias * 0.30)
-                + (scoreHistorico * 0.20)
-                + (scoreReputacao * 0.15);
+        double scoreTotal = (scoreSkills * 0.30)
+        + (scoreDias * 0.25)
+        + (scoreHistorico * 0.15)
+        + (scoreReputacao * 0.15)
+        + (scoreCidade * 0.15);
 
         Optional<MatchDto> existente = matchRepository.findByUsuarioIdIdAndProjetoIdId(usuarioId, projetoId);
 

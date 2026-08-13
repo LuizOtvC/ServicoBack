@@ -12,13 +12,17 @@ public class UserUpd {
     private String descricao;
     private String telefone;
     private Set<User.DiaSemana> diasTrabalho;
+    private String cidade;
 
-    public UserUpd(String nome, String descricao, String telefone, Set<User.DiaSemana> diasTrabalho) {
+    public UserUpd(String nome, String descricao, String telefone, Set<User.DiaSemana> diasTrabalho, String cidade) {
         this.nome = nome;
         this.descricao = descricao;
         this.telefone = telefone;
         this.diasTrabalho = diasTrabalho;
+        this.cidade = cidade;
     }
+
+    
 
     public UserUpd() {
     }
@@ -54,4 +58,14 @@ public class UserUpd {
     public void setDiasTrabalho(Set<User.DiaSemana> diasTrabalho) {
         this.diasTrabalho = diasTrabalho;
     }
+
+    public String getCidade() {
+        return cidade;
+    }
+
+    public void setCidade(String cidade) {
+        this.cidade = cidade;
+    }
+    
+    
 }

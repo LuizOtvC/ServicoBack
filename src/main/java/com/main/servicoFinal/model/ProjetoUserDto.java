@@ -19,6 +19,7 @@ public class ProjetoUserDto {
     private ProjetoDto.Status status;
     private List<Long> servicosId;
     private Set<ProjetoDto.DiaSemana> diasTrabalho;
+    private String cidade;
 
     public String getTitulo() {
         return titulo;
@@ -67,5 +68,15 @@ public class ProjetoUserDto {
     public void setDiasTrabalho(Set<ProjetoDto.DiaSemana> diasTrabalho) {
         this.diasTrabalho = diasTrabalho;
     }
+
+    public String getCidade() {
+        return cidade;
+    }
+
+    public void setCidade(String cidade) {
+        this.cidade = cidade;
+    }
+    
+    
 
 }
