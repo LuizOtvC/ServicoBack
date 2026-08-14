@@ -72,25 +72,29 @@ public class AvaliacaoService {
         avaliacao.setComentario(comentario);
         avaliacaoRepository.save(avaliacao);
 
-        atualizarReputacao(avaliadoId);
+atualizarReputacao(avaliadoId, nota);
     }
 
     public boolean jaAvaliou(Long projetoId, Long avaliadorId) {
         return avaliacaoRepository.existsByProjetoIdAndAvaliadorId(projetoId, avaliadorId);
     }
 
-    private void atualizarReputacao(Long usuarioId) {
-        List<AvaliacaoDto> avaliacoes = avaliacaoRepository.findByAvaliadoId(usuarioId);
-        double media = avaliacoes.stream()
-                .mapToDouble(AvaliacaoDto::getNota)
-                .average()
-                .orElse(5.0);
+   private void atualizarReputacao(Long usuarioId, Double novaNota) {
 
-        User user = userRepository.getReferenceById(usuarioId);
-        user.setReputacao(media);
-        if (media < 1.0) {
+    User user = userRepository.findById(usuarioId)
+            .orElseThrow(() ->
+                    new RuntimeException("Usuário não encontrado"));
+
+    double reputacaoAtual = user.getReputacao();
+
+    double novaReputacao = (reputacaoAtual + novaNota) / 2.0;
+
+    user.setReputacao(novaReputacao);
+
+    if (novaReputacao < 2.5) {
         user.setStatus(User.Status.ARQUIVADO);
-    } 
-        userRepository.save(user);
     }
+
+    userRepository.save(user);
+}
 }
