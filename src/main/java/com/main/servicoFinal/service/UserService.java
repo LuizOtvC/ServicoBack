@@ -54,7 +54,7 @@ public class UserService {
         }else if(user.getStatus() == User.Status.ARQUIVADO){
             throw new ResponseStatusException(
                     HttpStatus.UNAUTHORIZED,
-                    "Perfil Arquivado, por favor registre-se para continuar "
+                    "Perfil Arquivado, por favor cadastre-se para continuar "
             );
         }
         userrepository.save(user);

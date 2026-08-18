@@ -66,7 +66,7 @@ public class ProjetoService {
             );           
         }
         
-        if (projetoRepository.existsByUsuarioIdIdAndTituloIgnoreCase(usuarioId, dados.getTitulo())) {
+        if (projetoRepository.existsByUsuarioIdIdAndTituloIgnoreCaseAndStatusIn(usuarioId, dados.getTitulo(), List.of(ProjetoDto.Status.ABERTO, ProjetoDto.Status.EM_ANDAMENTO))) {
         throw new ResponseStatusException(HttpStatusCode.valueOf(400), "Você já possui um projeto com esse nome");
     }
         

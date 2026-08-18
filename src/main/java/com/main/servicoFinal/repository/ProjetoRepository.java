@@ -44,6 +44,6 @@ public interface ProjetoRepository extends JpaRepository<ProjetoDto, Long> {
 
     public List<ProjetoDto> findByUsuarioIdIdAndStatusNot(Long id, ProjetoDto.Status status);
 
-    public boolean existsByUsuarioIdIdAndTituloIgnoreCase(Long usuarioId, String titulo);
+    public boolean existsByUsuarioIdIdAndTituloIgnoreCaseAndStatusIn(Long usuarioId, String titulo, List<ProjetoDto.Status> of);
 
 }
