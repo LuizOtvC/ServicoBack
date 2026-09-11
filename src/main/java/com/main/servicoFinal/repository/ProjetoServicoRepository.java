@@ -17,4 +17,5 @@ public interface ProjetoServicoRepository extends JpaRepository<ProjetoServicoDt
 
     List<ProjetoServicoDto> findByProjetoId(Long projetoId);
 
+    List<ProjetoServicoDto> findByProjetoIdIn(List<Long> projetoIds);
 }

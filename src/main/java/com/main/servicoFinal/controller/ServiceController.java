@@ -15,8 +15,11 @@ import com.main.servicoFinal.service.ServicoService;
 import com.main.servicoFinal.service.TokenService;
 import com.main.servicoFinal.service.UserService;
 import jakarta.servlet.http.HttpSession;
+
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,52 +39,47 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/servico")
 public class ServiceController {
     @Autowired
-    private ServicoService service; 
-    
+    private ServicoService service;
+
     @Autowired
     private TokenService tokens;
-    
+
     @PostMapping("/{servicoId}/habilidades")
-    public void adicionarHabilidade(@PathVariable Long servicoId,@RequestParam UsuarioServicoDto.Nivel nivel,@RequestHeader("Authorization") String auth) {
+    public void adicionarHabilidade(@PathVariable Long servicoId, @RequestParam UsuarioServicoDto.Nivel nivel) {
 
-    String token = auth.replace("Bearer ", "");
-    User usertoken = tokens.extrairClaims(token);
+        User usuarioLogado = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-    service.adicionarHabilidade(usertoken.getId(), servicoId, nivel);
-}
-    
+        service.adicionarHabilidade(usuarioLogado.getId(), servicoId, nivel);
+    }
+
     @GetMapping("/listar")
-    public List<ServicoDto> listar(@RequestHeader("Authorization") String auth){
-        
+    public List<ServicoDto> listar() {
+
         return service.listarTodosServicos();
 
     }
-    
+
     @GetMapping("/listarHabilidadesId")
-    public List<ServicoListar> listarHabilidadesId(@RequestHeader("Authorization") String auth){
-        String token = auth.replace("Bearer ", "");
-        User usertoken = tokens.extrairClaims(token);
-        return service.listarHabilidades(usertoken.getId());
+    public List<ServicoListar> listarHabilidadesId() {
+        User usuarioLogado = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return service.listarHabilidades(usuarioLogado.getId());
     }
-    
+
     @PutMapping("/atualizar")
-    public void atualizarHabilidade(@RequestHeader("Authorization") String auth, @RequestBody ServicoAtualizar dados){
-        String token = auth.replace("Bearer ", "");
-        User usertoken = tokens.extrairClaims(token);
-         service.atualizarHabilidade(usertoken.getId(), dados);
+    public void atualizarHabilidade(@RequestBody ServicoAtualizar dados) {
+        User usuarioLogado = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        service.atualizarHabilidade(usuarioLogado.getId(), dados);
     }
-    
+
     @DeleteMapping("/deletar")
-    public void apagarHabilidade(@RequestHeader("Authorization") String auth, @RequestBody ServicoAtualizar dados){
-        String token = auth.replace("Bearer ", "");
-        User usertoken = tokens.extrairClaims(token);
-         service.deletarHabilidade(usertoken.getId(), dados.getIdAntigo());
+    public void apagarHabilidade(@RequestBody ServicoAtualizar dados) {
+        User usuarioLogado = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        service.deletarHabilidade(usuarioLogado.getId(), dados.getIdAntigo());
     }
+
     @GetMapping("/listarHabilidadesId/{id}")
-    public List<ServicoListar> listarHabilidadesPorUsuario(@PathVariable Long id,@RequestHeader("Authorization") String auth) {
-    String token = auth.replace("Bearer ", "");
-    tokens.extrairClaims(token);
-    return service.listarHabilidades(id);
-}
-    
+    public List<ServicoListar> listarHabilidadesPorUsuario(@PathVariable Long id) {
+        return service.listarHabilidades(id);
+    }
+
 }

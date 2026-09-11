@@ -13,6 +13,7 @@ import com.main.servicoFinal.service.MensagemService;
 import com.main.servicoFinal.service.TokenService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -37,10 +38,10 @@ public class MatchController {
     private TokenService tokens;
 
     @GetMapping("/score/{projetoId}")
-    public Double getScoreProjeto(@PathVariable Long projetoId,@RequestHeader("Authorization") String auth) {String token = auth.replace("Bearer ", "");
-        User usertoken = tokens.extrairClaims(token);
-        service.calcularMatchProjeto(usertoken.getId(), projetoId);
-        return repositoryMatch.findByUsuarioIdIdAndProjetoIdId(usertoken.getId(), projetoId).map(MatchDto::getScoreTotal).orElse(0.0);
+    public Double getScoreProjeto(@PathVariable Long projetoId) {
+        User usuarioLogado = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        service.calcularMatchProjeto(usuarioLogado.getId(), projetoId);
+        return repositoryMatch.findByUsuarioIdIdAndProjetoIdId(usuarioLogado.getId(), projetoId).map(MatchDto::getScoreTotal).orElse(0.0);
     }
 
 }

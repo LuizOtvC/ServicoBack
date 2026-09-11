@@ -4,10 +4,7 @@
  */
 package com.main.servicoFinal.service;
 
-import com.main.servicoFinal.model.User;
-import com.main.servicoFinal.model.UserUpd;
-import com.main.servicoFinal.model.UserPerfil;
-import com.main.servicoFinal.model.UserRegistro;
+import com.main.servicoFinal.model.*;
 import com.main.servicoFinal.repository.UserRepository;
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -15,6 +12,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -29,12 +27,17 @@ public class UserService {
     private UserRepository repository;
 
     @Autowired
-    private TokenService tokenrepository;
+    private TokenService tokenService;
     
     @Autowired
     private UserRepository userrepository;
 
-    public String logar(String email, String senha) {
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+
+
+    public TokenResponseDto logar(String email, String senha) {
         User user = repository.findByEmail(email)
                 .orElseThrow(()
                         -> new ResponseStatusException(
@@ -42,7 +45,7 @@ public class UserService {
                         "Email invalido"
                 ));
 
-        if (!senha.equals(user.getSenha())) {
+        if (!passwordEncoder.matches(senha, user.getSenha())) {
             throw new ResponseStatusException(
                     HttpStatus.UNAUTHORIZED,
                     "senha inválido"
@@ -58,7 +61,9 @@ public class UserService {
             );
         }
         userrepository.save(user);
-        return tokenrepository.gerarToken(user);
+        String accessToken = tokenService.gerarToken(user);
+        String refreshToken = tokenService.gerarRefreshToken(user);
+        return new TokenResponseDto(accessToken, refreshToken);
     }
 
     public String registrar(UserRegistro dados) {
@@ -84,12 +89,12 @@ public class UserService {
         User user = new User();
         user.setNome(dados.getNome());
         user.setEmail(dados.getEmail());
-        user.setSenha(dados.getSenha());
+        user.setSenha(passwordEncoder.encode(dados.getSenha()));
         user.setTelefone(dados.getTelefone());
         user.setStatus(User.Status.ATIVO);
         user.setUltimoLogin(LocalDateTime.now());
         repository.save(user);
-        return tokenrepository.gerarToken(user);
+        return tokenService.gerarToken(user);
     }
 
     private boolean senhaValida(String senha) {

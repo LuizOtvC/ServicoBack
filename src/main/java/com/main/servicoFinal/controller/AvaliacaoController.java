@@ -8,6 +8,7 @@ import com.main.servicoFinal.model.User;
 import com.main.servicoFinal.service.AvaliacaoService;
 import com.main.servicoFinal.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,16 +32,14 @@ public class AvaliacaoController {
     private TokenService tokens;
 
     @PostMapping("/criar/{id}")
-    public void avaliar(@PathVariable Long id, @RequestParam Double nota, @RequestParam(required = false) String comentario, @RequestHeader("Authorization") String auth) {
-        String token = auth.replace("Bearer ", "");
-        User usertoken = tokens.extrairClaims(token);
-        service.avaliar(usertoken.getId(), id, nota, comentario);
+    public void avaliar(@PathVariable Long id, @RequestParam Double nota, @RequestParam(required = false) String comentario) {
+        User usuarioLogado = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        service.avaliar(usuarioLogado.getId(), id, nota, comentario);
     }
 
     @GetMapping("/jaAvaliei/{id}")
-    public boolean jaAvaliei(@PathVariable Long id, @RequestHeader("Authorization") String auth) {
-        String token = auth.replace("Bearer ", "");
-        User usertoken = tokens.extrairClaims(token);
-        return service.jaAvaliou(id, usertoken.getId());
+    public boolean jaAvaliei(@PathVariable Long id) {
+        User usuarioLogado = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return service.jaAvaliou(id, usuarioLogado.getId());
     }
 }

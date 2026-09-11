@@ -8,8 +8,11 @@ import com.main.servicoFinal.model.MensagemRespostaDto;
 import com.main.servicoFinal.model.User;
 import com.main.servicoFinal.service.MensagemService;
 import com.main.servicoFinal.service.TokenService;
+
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,31 +36,26 @@ public class MensagemController {
     private TokenService tokens;
 
     @GetMapping("/listar")
-    public List<MensagemRespostaDto> listarMensagens(@RequestHeader("Authorization") String auth) {
-        String token = auth.replace("Bearer ", "");
-        User usertoken = tokens.extrairClaims(token);
-        return service.listarMensagens(usertoken.getId());
+    public List<MensagemRespostaDto> listarMensagens() {
+        User usuarioLogado = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return service.listarMensagens(usuarioLogado.getId());
     }
 
     @DeleteMapping("/deletar/{id}")
-    public void apagarmensagem(@RequestHeader("Authorization") String auth, @PathVariable Long id) {
-        String token = auth.replace("Bearer ", "");
-        tokens.extrairClaims(token);
+    public void apagarmensagem(@PathVariable Long id) {
         service.deletarMensagem(id);
     }
 
     @PostMapping("/marcarLido")
-    public void marcarComoLido(@RequestHeader("Authorization") String auth) {
-        String token = auth.replace("Bearer ", "");
-        User usertoken = tokens.extrairClaims(token);
-        service.marcarComoLida(usertoken.getId());
+    public void marcarComoLido() {
+        User usuarioLogado = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        service.marcarComoLida(usuarioLogado.getId());
     }
 
     @GetMapping("/naoLidas")
-    public Long contarNaoLidas(@RequestHeader("Authorization") String auth) {
-        String token = auth.replace("Bearer ", "");
-        User usertoken = tokens.extrairClaims(token);
-        return service.VerQuantasMensagensNaoLidas(usertoken.getId());
+    public Long contarNaoLidas() {
+        User usuarioLogado = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return service.VerQuantasMensagensNaoLidas(usuarioLogado.getId());
     }
 
 }

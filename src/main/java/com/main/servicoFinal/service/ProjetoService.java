@@ -19,20 +19,26 @@ import com.main.servicoFinal.repository.ProjetoServicoRepository;
 import com.main.servicoFinal.repository.PropostaRepository;
 import com.main.servicoFinal.repository.ServiceRepository;
 import com.main.servicoFinal.repository.UserRepository;
+import org.springframework.data.domain.PageImpl;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-/**
- *
- * @author Mateus
- */
+
 @Service
 public class ProjetoService {
 
@@ -57,6 +63,7 @@ public class ProjetoService {
     @Autowired
     private PropostaService propostaService;
 
+    @Transactional
     public void criarProjeto(Long usuarioId, ProjetoUserDto dados) {
         long quantidade = projetoRepository.countByUsuarioIdIdAndStatusIn(usuarioId, List.of(ProjetoDto.Status.ABERTO, ProjetoDto.Status.EM_ANDAMENTO));
 
@@ -96,22 +103,30 @@ public class ProjetoService {
         return projetoRepository.findAll();
     }
 
-    public List<ProjetoResposta> listarProjetosComFiltro(Long usuarioId, Double orcamentoMin, List<Long> servicosIds, List<ProjetoDto.DiaSemana> diasSemana) {
+    public Page<ProjetoResposta> listarProjetosComFiltro(Long usuarioId, Double orcamentoMin, List<Long> servicosIds, List<ProjetoDto.DiaSemana> diasSemana, Pageable pageable) {
 
-        List<ProjetoDto> projetos = projetoRepository.findComFiltros(
-                usuarioId, orcamentoMin, servicosIds, diasSemana);
+        Page<ProjetoDto> projetos = projetoRepository.findComFiltros(
+                usuarioId, orcamentoMin, servicosIds, diasSemana, pageable);
+
+        List<Long> projetoIds = projetos.getContent().stream().map(ProjetoDto::getId).toList();
+        List<ProjetoServicoDto> todosServicos = projetoServicoRepository.findByProjetoIdIn(projetoIds);
+        Map<Long, List<ProjetoServicoDto>> servicosPorProjeto =
+                todosServicos.stream()
+                        .collect(Collectors.groupingBy(ps -> ps.getProjeto().getId()));
 
         List<ProjetoResposta> resultado = new ArrayList<>();
-        for (ProjetoDto p : projetos) {
+        for (ProjetoDto p : projetos.getContent()) {
+            List<ProjetoServicoDto> ps = servicosPorProjeto.getOrDefault(p.getId(), List.of());
+
             List<String> servicos = new ArrayList<>();
-            List<ProjetoServicoDto> ps = projetoServicoRepository.findByProjetoId(p.getId());
             for (ProjetoServicoDto s : ps) {
                 servicos.add(s.getServico().getNome());
             }
             List<String> dias = p.getDiasTrabalho().stream().map(Enum::name).toList();
             resultado.add(new ProjetoResposta(p.getId(), p.getTitulo(), p.getDescricao(), p.getOrcamento(), p.getStatus().name(), servicos, p.getUsuarioId().getId(), p.getScoreRisco(), p.getCriadoEm(), dias, null, p.getCidade()));
         }
-        return resultado;
+
+        return new PageImpl<>(resultado, pageable, projetos.getTotalElements());
     }
 
     public ProjetoResposta projetoPorId(Long id) {
@@ -164,15 +179,25 @@ public class ProjetoService {
     }
 
     public List<ProjetoResposta> listarProjetosUsuario(Long id) {
-        List<ProjetoDto> projetos = projetoRepository.findByUsuarioIdIdAndStatusNot(id,ProjetoDto.Status.ARQUIVADO);
+        List<ProjetoDto> projetos = projetoRepository.findByUsuarioIdIdAndStatusNot(id, ProjetoDto.Status.ARQUIVADO);
+
+        List<Long> projetoIds = projetos.stream().map(ProjetoDto::getId).toList();
+        List<ProjetoServicoDto> todosServicos = projetoServicoRepository.findByProjetoIdIn(projetoIds);
+
+        Map<Long, List<ProjetoServicoDto>> servicosPorProjeto =
+                todosServicos.stream()
+                        .collect(Collectors.groupingBy(ps -> ps.getProjeto().getId()));
+
         List<ProjetoResposta> resultado = new ArrayList<>();
 
         for (ProjetoDto p : projetos) {
+            List<ProjetoServicoDto> ps = servicosPorProjeto.getOrDefault(p.getId(), List.of());
+
             List<String> servicos = new ArrayList<>();
-            List<ProjetoServicoDto> ps = projetoServicoRepository.findByProjetoId(p.getId());
             for (ProjetoServicoDto s : ps) {
                 servicos.add(s.getServico().getNome());
             }
+
             List<String> dias = p.getDiasTrabalho()
                     .stream()
                     .sorted()
@@ -180,24 +205,16 @@ public class ProjetoService {
                     .toList();
 
             resultado.add(new ProjetoResposta(
-                    p.getId(),
-                    p.getTitulo(),
-                    p.getDescricao(),
-                    p.getOrcamento(),
-                    p.getStatus().name(),
-                    servicos,
-                    p.getUsuarioId().getId(),
-                    p.getScoreRisco(),
-                    p.getCriadoEm(),
-                    dias,
-                    null,
-                    p.getCidade()
+                    p.getId(), p.getTitulo(), p.getDescricao(), p.getOrcamento(),
+                    p.getStatus().name(), servicos, p.getUsuarioId().getId(),
+                    p.getScoreRisco(), p.getCriadoEm(), dias, null, p.getCidade()
             ));
         }
         return resultado;
     }
 
-    public void projetoEmAndamento(Long id, String token) {
+    @Transactional
+    public void projetoEmAndamento(Long id) {
         ProjetoDto projeto = projetoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Projeto não encontrado"));
         List<PropostaDto> pendentes = propostaRepository.findAllByProjetoAndStatus(projeto, PropostaDto.Status.PENDENTE);
@@ -216,7 +233,8 @@ public class ProjetoService {
         mensagemService.ProjetoEmAndamentoProposta(proposta);
     }
 
-    public void projetoConcluido(Long id, String token) {
+    @Transactional
+    public void projetoConcluido(Long id) {
         ProjetoDto projeto = projetoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Projeto não encontrado"));
 
@@ -232,6 +250,7 @@ public class ProjetoService {
                 });
     }
 
+    @Transactional
     public void projetoCancelado(Long id) {
         ProjetoDto projeto = projetoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Projeto não encontrado"));

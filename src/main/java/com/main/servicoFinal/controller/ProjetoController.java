@@ -13,8 +13,14 @@ import com.main.servicoFinal.service.MatchService;
 import com.main.servicoFinal.service.ProjetoService;
 import com.main.servicoFinal.service.ServicoService;
 import com.main.servicoFinal.service.TokenService;
+
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,73 +39,64 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/projeto")
 public class ProjetoController {
     @Autowired
-    private ProjetoService service; 
-    
+    private ProjetoService service;
+
     @Autowired
     private TokenService tokens;
-    
+
     @Autowired
     private MatchService matchService;
-    
+
     @PostMapping("/criar")
-    public void criarProjeto(@RequestBody ProjetoUserDto dados, @RequestHeader("Authorization") String auth) {
-    String token = auth.replace("Bearer ", "");
-    User usertoken = tokens.extrairClaims(token);
-    service.criarProjeto(usertoken.getId(), dados);
-}
+    public void criarProjeto(@RequestBody ProjetoUserDto dados) {
+        User usuarioLogado = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        service.criarProjeto(usuarioLogado.getId(), dados);
+    }
 
-@GetMapping("/listar")
-public List<ProjetoDto> listarProjeto(@RequestHeader("Authorization") String auth) {
-    String token = auth.replace("Bearer ", "");
-    tokens.extrairClaims(token);
-    return service.listarProjetos();
-}
-@GetMapping("/listarFiltro")
-public List<ProjetoResposta> listarComFiltro(@RequestHeader("Authorization") String auth, @RequestParam(required = false) Double orcamentoMin, @RequestParam(required = false) List<Long> servicosIds, @RequestParam(required = false) List<String> diasSemana) {
-    String token = auth.replace("Bearer ", "");
-    User usertoken = tokens.extrairClaims(token);
+    @GetMapping("/listar")
+    public List<ProjetoDto> listarProjeto() {
+        return service.listarProjetos();
+    }
 
-    List<ProjetoDto.DiaSemana> dias = diasSemana != null ? diasSemana.stream().map(ProjetoDto.DiaSemana::valueOf).toList() : null;
+    @GetMapping("/listarFiltro")
+    public Page<ProjetoResposta> listarComFiltro(@RequestParam(required = false) Double orcamentoMin, @RequestParam(required = false) List<Long> servicosIds, @RequestParam(required = false) List<String> diasSemana, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
 
-    return service.listarProjetosComFiltro(
-        usertoken.getId(), orcamentoMin, servicosIds, dias);
-}
-@GetMapping("/listarId/{id}")
-public ProjetoResposta listarProjetoId(@RequestHeader("Authorization") String auth, @PathVariable Long id) {
-    String token = auth.replace("Bearer ", "");
-    User usertoken = tokens.extrairClaims(token);
-    matchService.calcularMatchProjeto(usertoken.getId(), id);
-    return service.projetoPorId(id);
-}
-@GetMapping("/listarFiltroUser")
-public List<ProjetoResposta> listarProjetosFiltroUsuario(@RequestHeader("Authorization") String auth) {
-    String token = auth.replace("Bearer ", "");
-    User usertoken = tokens.extrairClaims(token);
-    return service.listarProjetosUsuario(usertoken.getId());
-}
-@PutMapping("/andamento/{id}")
-public void emAndamentoProjeto(@PathVariable Long id, @RequestHeader("Authorization") String auth) {
-    String token = auth.replace("Bearer ", "");
-    tokens.extrairClaims(token);
-    service.projetoEmAndamento(id, token);
-}
+        User usuarioLogado = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        List<ProjetoDto.DiaSemana> dias = diasSemana != null ? diasSemana.stream().map(ProjetoDto.DiaSemana::valueOf).toList() : null;
+        Pageable pageable = PageRequest.of(page, size);
+        return service.listarProjetosComFiltro(usuarioLogado.getId(), orcamentoMin, servicosIds, dias, pageable);
+    }
 
-@PutMapping("/concluido/{id}")
-public void ConcluidoProjeto(@PathVariable Long id, @RequestHeader("Authorization") String auth) {
-    String token = auth.replace("Bearer ", "");
-    tokens.extrairClaims(token);
-    service.projetoConcluido(id, token);
-}
-@PutMapping("/cancelar/{id}")
-public void CanceladoProjeto(@PathVariable Long id, @RequestHeader("Authorization") String auth) {
-    String token = auth.replace("Bearer ", "");
-    tokens.extrairClaims(token);
-    service.projetoCancelado(id);
-}
-@PutMapping("/arquivar/{id}")
-public void arquivarProjeto(@PathVariable Long id, @RequestHeader("Authorization") String auth) {
-    String token = auth.replace("Bearer ", "");
-    tokens.extrairClaims(token);
-    service.arquivarProjeto(id);
-}
+    @GetMapping("/listarId/{id}")
+    public ProjetoResposta listarProjetoId(@PathVariable Long id) {
+        User usuarioLogado = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        matchService.calcularMatchProjeto(usuarioLogado.getId(), id);
+        return service.projetoPorId(id);
+    }
+
+    @GetMapping("/listarFiltroUser")
+    public List<ProjetoResposta> listarProjetosFiltroUsuario() {
+        User usuarioLogado = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return service.listarProjetosUsuario(usuarioLogado.getId());
+    }
+
+    @PutMapping("/andamento/{id}")
+    public void emAndamentoProjeto(@PathVariable Long id) {
+        service.projetoEmAndamento(id);
+    }
+
+    @PutMapping("/concluido/{id}")
+    public void ConcluidoProjeto(@PathVariable Long id) {
+        service.projetoConcluido(id);
+    }
+
+    @PutMapping("/cancelar/{id}")
+    public void CanceladoProjeto(@PathVariable Long id) {
+        service.projetoCancelado(id);
+    }
+
+    @PutMapping("/arquivar/{id}")
+    public void arquivarProjeto(@PathVariable Long id) {
+        service.arquivarProjeto(id);
+    }
 }

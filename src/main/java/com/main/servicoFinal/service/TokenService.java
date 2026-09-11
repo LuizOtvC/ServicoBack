@@ -56,6 +56,16 @@ public class TokenService {
                 .compact();
     }
 
+    public String gerarRefreshToken(User user) {
+        return Jwts.builder()
+                .subject(user.getEmail())
+                .claim("id", user.getId())
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + 604800000))
+                .signWith(this.getKeySign())
+                .compact();
+    }
+
     public boolean validarToken(String token) {
         try {
             // Cria um parser JWT com a chave secreta para validação

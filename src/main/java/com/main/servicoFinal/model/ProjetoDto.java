@@ -56,7 +56,7 @@ public class ProjetoDto {
     @Column(nullable = false, name = "criado_em")
     private LocalDateTime criadoEm;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(
             name = "projeto_dia_trabalho",
             joinColumns = @JoinColumn(name = "projeto_id")
